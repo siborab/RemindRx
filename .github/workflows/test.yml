@@ -14,6 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Download nix 
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{secrets.GITHUB_TOKEN}}
+
       # Set up Nix environment using nix-develop action
       - name: Set up Nix environment
         uses: nicknovitski/nix-develop@v1
