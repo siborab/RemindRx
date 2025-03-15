@@ -17,11 +17,5 @@ jobs:
       # Set up Nix
       
       - name: Set up Nix
-        uses: marcobiedermann/setup-nix@v1
-        with:
-          nix_version: "latest"  # Or specify a version like "2.3.12"
-
-      # Run tests with pytest inside the scanner folder
-      - name: Run tests
-        run: pytest scanner  # Run pytest in the scanner folder
-
+      - uses: nicknovitski/nix-develop@v1
+      - run: pytest scanner 
