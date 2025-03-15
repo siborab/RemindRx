@@ -1,20 +1,31 @@
 import cv2
+import os
 import pytesseract
 import numpy as np
 
+
+
+VALID_IMG_TYPES = {'.jpg', '.jpeg', '.png', 'bmp', '.tiff'}
+
 def is_blank_image(image):
+    mean_intensity = np.mean(image)
+    print(mean_intensity)
+    return mean_intensity > 250 # if the intensity is closer to 255, we know there is not much variation in the image, i.e., things are the same color with no text on it 
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def preprocess_image(image_path): 
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"Image at {image_path} could not be found")
 
-    mean_intensity = np.mean(gray)
+    _, extension = os.path.splitext(image_path)
 
-    return mean_intensity > 250 # if the intensity is closer to 255, we know it's basically guaranteed to be pure white
-
-def preprocess_image(image_path):
-    # Load image
+    if extension.lower() not in VALID_IMG_TYPES:
+        raise ValueError(f"Invalid file type: {extension}. Only {', '.join(VALID_IMG_TYPES)} are supported")
+    
     image = cv2.imread(image_path)
+    
+    if image is None:
+        return FileNotFoundError(f"Image at {image_path} could not be loaded")
 
-    # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Apply Gaussian Blur (helps reduce noise)
@@ -28,11 +39,17 @@ def preprocess_image(image_path):
     return thresh
 
 def extract_text_from_label(image_path):
-    # Preprocess the image
-    processed_image = preprocess_image(image_path)
+    try:
+        processed_image = preprocess_image(image_path)
+    except FileNotFoundError as e: 
+       print(f"Error: {e}")
+       raise e
+    except ValueError as e:
+        print(f"Error: {e}")
+        raise e
 
-    if is_blank_image(cv2.imread(image_path)):
-        return ""
+    # if is_blank_image(processed_image):
+    #     return ""
 
     # Find contours of text regions
     contours, _ = cv2.findContours(
@@ -44,11 +61,9 @@ def extract_text_from_label(image_path):
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
 
-        # Ignore very small regions (likely noise)
         if w < 30 or h < 10:
             continue
 
-        # Crop detected text area
         text_region = processed_image[y : y + h, x : x + w]
 
         # Apply OCR (Tesseract)
@@ -57,10 +72,10 @@ def extract_text_from_label(image_path):
         if text:  # Ignore empty results
             extracted_texts.append(text)
 
-    return extracted_texts
+    return "".join(extracted_texts)
 
 # Example usage
-image_path = "./images/label3.jpg"
+image_path = "./images/hi.txt"
 detected_text = extract_text_from_label(image_path)
 print("Extracted Text:", detected_text)
 
