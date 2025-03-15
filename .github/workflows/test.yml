@@ -26,7 +26,7 @@ jobs:
       - name: Set up Nix environment
         run: |
           source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix is available
-          nix develop --no-link  # This will enter the devShell defined in your flake.nix
+          nix develop # This will enter the devShell defined in your flake.nix
 
       # Run the tests
       - name: Run tests
