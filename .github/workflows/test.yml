@@ -14,8 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Set up Nix
-      
-      - name: Set up Nix
+      # Set up Nix environment using nix-develop action
+      - name: Set up Nix environment
         uses: nicknovitski/nix-develop@v1
-        run: pytest scanner 
+
+      # Run tests with pytest inside the scanner folder
+      - name: Run tests
+        run: pytest scanner  # Run pytest in the scanner folder
+
