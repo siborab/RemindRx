@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       # Set up Nix
+      
       - name: Set up Nix
         uses: marcobiedermann/setup-nix@v1
         with:
@@ -22,6 +23,5 @@ jobs:
 
       # Run tests with pytest inside the scanner folder
       - name: Run tests
-        run: |
-          nix develop --command pytest scanner  # Run pytest in the scanner folder
+        run: pytest scanner  # Run pytest in the scanner folder
 
