@@ -1,22 +1,36 @@
-name: Test
+name: Run Tests
+
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest  # You can change this to 'macos-latest' if using macOS runners
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Nix
+      - name: Set up Nix
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl -L https://nixos.org/nix/install | sh
+          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix is in the environment
+
+      # Install dependencies and set up environment via flake.nix
+      - name: Set up Nix environment
+        run: |
+          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix is available
+          nix develop --no-link  # This will enter the devShell defined in your flake.nix
+
+      # Run the tests
+      - name: Run tests
+        run: |
+          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix environment is still active
+          pytest  # Or any other test command you use, e.g., 'python -m unittest'
+
