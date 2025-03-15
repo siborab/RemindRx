@@ -31,20 +31,21 @@
         ]);
 
       in {
-        devShell = pkgs.mkShell {
-          buildInputs = [
-            my-python-env
-            pkgs.tesseract
-            pkgs.git
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-            pkgs.darwin.apple_sdk.frameworks.CoreGraphics
-            pkgs.darwin.apple_sdk.frameworks.Vision
-          ];
+        devShells = {
+          x86_64-linux.default = pkgs.mkShell {
+            buildInputs = [
+              my-python-env
+              pkgs.tesseract
+              pkgs.git
+            ];
 
-          shellHook = ''
-            export PATH="$HOME/.local/bin:$PATH"
-          '';
+            shellHook = ''
+              export PATH="$HOME/.local/bin:$PATH"
+            '';
+          };
         };
+
+        packages.x86_64-linux.default = my-python-env;
       }
     );
 }
