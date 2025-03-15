@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # You can change this to 'macos-latest' if using macOS runners
+    runs-on: ubuntu-latest  # Or macos-latest for macOS
 
     steps:
       # Checkout the code from the repository
@@ -16,21 +16,12 @@ jobs:
 
       # Set up Nix
       - name: Set up Nix
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl
-          curl -L https://nixos.org/nix/install | sh
-          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix is in the environment
+        uses: marcobiedermann/setup-nix@v1
+        with:
+          nix_version: "latest"  # Or specify a version like "2.3.12"
 
-      # Install dependencies and set up environment via flake.nix
-      - name: Set up Nix environment
-        run: |
-          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix is available
-          nix develop # This will enter the devShell defined in your flake.nix
-
-      # Run the tests
+      # Run tests with pytest inside the scanner folder
       - name: Run tests
         run: |
-          source $HOME/.nix-profile/etc/profile.d/nix.sh  # Ensure Nix environment is still active
-          pytest  # Or any other test command you use, e.g., 'python -m unittest'
+          nix develop --command pytest scanner  # Run pytest in the scanner folder
 

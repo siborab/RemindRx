@@ -75,7 +75,7 @@ def extract_text_from_label(image_path):
     return "".join(extracted_texts)
 
 # Example usage
-image_path = "./images/hi.txt"
-detected_text = extract_text_from_label(image_path)
-print("Extracted Text:", detected_text)
+# image_path = "./images/hi.txt"
+# detected_text = extract_text_from_label(image_path)
+# print("Extracted Text:", detected_text)
 

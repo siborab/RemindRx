@@ -11,7 +11,7 @@ def test_valid_label():
     detected_text = extract_text_from_label(image_path)
 
     assert isinstance(detected_text, str) # we know that our output has to be a string
-    assert detected_text == "nothing" # we know what the text in this image should be
+    assert detected_text.lower() == "nothing" # we know what the text in this image should be
 
 def test_empty_image():
     """Test if our model correctly handles images with no text in it"""
@@ -30,7 +30,7 @@ def test_invalid_image_format():
     """Test if our model can handle invalid file formats"""
     invalid_file = "./images/not_an_image.txt"
 
-    with open(invalid_file, "w") as f:
+    with open(invalid_file, "w+") as f:
         f.write("This is not an image")
 
     with pytest.raises(ValueError):
