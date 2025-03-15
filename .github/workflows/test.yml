@@ -17,5 +17,5 @@ jobs:
       # Set up Nix
       
       - name: Set up Nix
-      - uses: nicknovitski/nix-develop@v1
-      - run: pytest scanner 
+        uses: nicknovitski/nix-develop@v1
+        run: pytest scanner 
