@@ -2,6 +2,14 @@ import cv2
 import pytesseract
 import numpy as np
 
+def is_blank_image(image):
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    mean_intensity = np.mean(gray)
+
+    return mean_intensity > 250 # if the intensity is closer to 255, we know it's basically guaranteed to be pure white
+
 def preprocess_image(image_path):
     # Load image
     image = cv2.imread(image_path)
@@ -22,6 +30,9 @@ def preprocess_image(image_path):
 def extract_text_from_label(image_path):
     # Preprocess the image
     processed_image = preprocess_image(image_path)
+
+    if is_blank_image(cv2.imread(image_path)):
+        return ""
 
     # Find contours of text regions
     contours, _ = cv2.findContours(
@@ -49,7 +60,7 @@ def extract_text_from_label(image_path):
     return extracted_texts
 
 # Example usage
-image_path = "label4.jpg"
+image_path = "./images/label3.jpg"
 detected_text = extract_text_from_label(image_path)
 print("Extracted Text:", detected_text)
 
