@@ -32,7 +32,7 @@
 
       in {
         devShells = {
-          x86_64-linux.default = pkgs.mkShell {
+          default = pkgs.mkShell {
             buildInputs = [
               my-python-env
               pkgs.tesseract
@@ -45,7 +45,9 @@
           };
         };
 
-        packages.x86_64-linux.default = my-python-env;
+        packages = {
+          default = my-python-env;
+        };
       }
     );
 }
