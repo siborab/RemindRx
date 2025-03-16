@@ -31,6 +31,8 @@ with open("mlb.pkl", "wb") as f:
 # by now the model si saved. should be accessible now by other files 
 def predict_times(description): #hardcoded recommender function
     try:
+        if not isinstance(description, str): #validate input datatype to be string
+                raise ValueError("Description must be a string")
         with open("vectorizer.pkl", "rb") as f: #should be testing-safe
             vectorizer = pickle.load(f)
 
@@ -45,14 +47,20 @@ def predict_times(description): #hardcoded recommender function
         predicted_times = mlb.inverse_transform(predicted_labels)
 
         if predicted_times and predicted_times[0]: #check if there is a prediction and if it's not empty
-            return predicted_times[0]
+            return list(predicted_times[0]) #typecasting to avoid weird formatting issues
         else:
             return ["No matching times found"] #if not, then return no matching times found
+    except ValueError as ve:
+            return [f"Bad Input: {str(ve)}"] #catch bad value errors as opposed to just bad output
     except Exception as e:
         return [f"Bad Output: {str(e)}"] #return the error if something goes wrong
     
+    
+'''
+#example usage 
 
 user_input = input("Enter a prescription description: ")
 recommended_times = predict_times(user_input)
 print(f"Recommended Times: {recommended_times}")
 print(recommended_times)
+'''
