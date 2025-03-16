@@ -25,5 +25,5 @@ jobs:
 
       # Run tests with pytest inside the scanner folder
       - name: Run tests
-        run: pytest scanner  # Run pytest in the scanner folder
+        run: pytest tests # Run pytest in the scanner folder
 
