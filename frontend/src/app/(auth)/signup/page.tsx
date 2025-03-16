@@ -9,7 +9,7 @@ export default function Signup() {
     return (
         <> 
             <div className="flex justify-center items-center content-center h-screen mx-10">
-                <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8">
+                <div className="w-full max-w-sm p-4 bg-white border border-indigo-500/40 rounded-lg shadow-lg sm:p-6 md:p-8">
                     <h1 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign Up</h1>
 
                     <form className='flex flex-col mt-10 sm:mx-auto sm:w-full sm:max-w-sm space-y-3' action={action}>
@@ -79,10 +79,17 @@ export default function Signup() {
                                 {state.errors.confirmPassword}
                             </div>)}
                         <div>
-                            <button className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' type='submit' disabled={isPending}>
+                            <button className='mt-4 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' type='submit' disabled={isPending}>
                                 {isPending ? "Submitting..." : "Submit"}
                             </button>
                         </div>
+
+                        <p className="mt-2 text-center text-sm text-gray-500">
+                            Have an account?{' '}
+                            <a href="/signin" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                Sign in
+                            </a>
+                        </p>
                     </form>
                 </div>
             </div>
