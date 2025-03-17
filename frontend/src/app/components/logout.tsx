@@ -2,15 +2,19 @@ import { useSetAtom } from "jotai";
 import { userAtom } from "@/lib/atoms";
 import { useRouter } from 'next/navigation'
 import { supabase } from "@/utils/supabase/client";
+import { useState } from "react";
 
-export default function Logout() {
+export function Logout() {
     const setAtom = useSetAtom(userAtom);
     const router = useRouter();
+    const [error, setError] = useState('')
     
     async function handleClick() {
         try {
             const { error } = await supabase.auth.signOut();
-            if (error) throw error;
+            if (error) {
+                console.error('Sign out error:', error);
+            }
             
             setAtom({
                 first_name: '',

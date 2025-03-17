@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atoms"
-import Logout from '@/app/components/logout'
+import {Logout} from '@/app/components/logout'
 
 export default function HomePage () {
   const userInfo = useAtomValue(userAtom);
