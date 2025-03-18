@@ -38,3 +38,4 @@ terraform.rc
 .venv
 
 flake_old.nix
+test_e2e.py

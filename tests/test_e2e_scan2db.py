@@ -9,5 +9,3 @@ def test_scan_and_recommend():
     file_path = os.path.join(os.path.dirname(__file__), "..", "scanner", "images", "test_description.png") #file path for the test image
     recommended_times = scan_and_recommend(file_path)
     assert recommended_times == [["06:00", "18:00"]]  # Replace with the expected output
-
-
