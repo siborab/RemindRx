@@ -18,7 +18,7 @@ DB_PASSWORD = "PidNH3QE3oItefMO"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 EMAIL_ADDRESS = "remindrx456@gmail.com"
-EMAIL_PASSWORD = "hdtj gxwc icwx msyh"  # Use an app password if 2FA is enabled
+EMAIL_PASSWORD = "hdtj gxwc icwx msyh"  
 
 # Set up logging
 logging.basicConfig(filename='medication_reminder.log', level=logging.INFO, 
