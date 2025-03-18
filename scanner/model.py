@@ -22,9 +22,9 @@ def preprocess_image(image_path):
         raise ValueError(f"Invalid file type: {extension}. Only {', '.join(VALID_IMG_TYPES)} are supported")
     
     image = cv2.imread(image_path)
-    
+
     if image is None:
-        return FileNotFoundError(f"Image at {image_path} could not be loaded")
+        raise ValueError(f"Image at {image_path} could not be read. It may be corrupted or in an unsupported format.")
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -37,6 +37,7 @@ def preprocess_image(image_path):
     )
 
     return thresh
+
 
 def extract_text_from_label(image_path):
     try:

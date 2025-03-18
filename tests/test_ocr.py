@@ -31,4 +31,3 @@ def test_invalid_image_format():
         extract_text_from_label(invalid_file)
 
     os.remove(invalid_file)
-
