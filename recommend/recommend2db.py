@@ -5,7 +5,7 @@ from recommend.recommendation import predict_times
 
 def recommend2db(text):
 
-    load_dotenv('../.env') #pathing for my env in root
+    load_dotenv('.env') #pathing for my env in root
     url= os.getenv("SUPABASE_URL")
     key= os.getenv("SUPABASE_KEY")
     supabase = create_client(url, key)

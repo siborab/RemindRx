@@ -1,8 +1,4 @@
 from recommend.recommend2db import recommend2db
-from recommend.recommendation import predict_times
-from supabase import create_client, Client
-import os
-from dotenv import load_dotenv
 
 def test_good():
     assert recommend2db("Take one tablet twice daily") == [["06:00", "18:00"]]

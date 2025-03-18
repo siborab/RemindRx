@@ -36,3 +36,5 @@ terraform.rc
 # Ignore local environment files
 .env
 .venv
+
+flake_old.nix
