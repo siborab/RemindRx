@@ -4,7 +4,7 @@ import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
-from recommendation import predict_times
+from recommend.recommendation import predict_times
 import pytest
 
 def test_init():

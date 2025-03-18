@@ -28,6 +28,8 @@
           scikit-learn
           pytest
           pytest-cov
+          pandas
+          scikit-learn
         ]);
 
       in {
