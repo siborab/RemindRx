@@ -23,7 +23,7 @@ describe('Logout Component', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('calls signOut', async () => {
+  it('calls logout button', async () => {
 
     const mockRouterPush = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({

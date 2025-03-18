@@ -21,7 +21,7 @@ export function Logout() {
                 last_name: ''
             });
             
-            router.push('/');
+            router.push('/signin');
         } catch (err) {
             console.error("Logout failed:", err);
         }
