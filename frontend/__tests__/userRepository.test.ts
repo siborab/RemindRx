@@ -205,6 +205,10 @@ describe('UserRepository Integration Test', () => {
         userRepository = new UserRepository(supabase);
     });
 
+    afterAll(async () => {
+        await supabase.from('users').delete().eq('id', testId);
+    });
+
     describe('create', () => {
         test('creating a new user', async () => {
             const user = await userRepository.create(testUser);
