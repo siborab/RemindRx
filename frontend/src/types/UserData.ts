@@ -3,21 +3,6 @@ export interface UserInfo {
     'last_name': string
 }
 
-export interface Prescription {
-    medication: string,
-    patient: number,
-    description: string,
-    amount: number,
-    frequency: string,
-    refills: number,
-    refill_time: string,
-    next_scheduled_time: string,
-    last_taken_at: string,
-    created_at: string,
-    updated_at: string,
-    id: number
-}
-
 export interface User {
     id?: number;
     first_name?: string | null;
@@ -30,3 +15,6 @@ export interface User {
     email?: string | null;
     auth_id?: string | null;
 }
+
+export type UserList = Array<Partial<User>>;
+export type UserFilter = Partial<User>; 

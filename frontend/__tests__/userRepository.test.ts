@@ -1,12 +1,13 @@
 import UserRepository from '@/utils/repository/userRepository';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/utils/supabase/client';
-import { User } from '@/types/UserData';
+import { User, UserFilter, UserList } from '@/types/UserData';
 
 let userRepository: UserRepository;
 
 // Unit test
 describe('UserRepository Unit Test', () => {
+
     const mockbase = {
         from: jest.fn().mockReturnThis(),
         insert: jest.fn().mockReturnThis(),
@@ -17,7 +18,7 @@ describe('UserRepository Unit Test', () => {
         delete: jest.fn().mockReturnThis(),
     };
 
-    const mockUser: User = {
+    const mockUser: Partial<User> = {
         id: 1,
         first_name: 'Ben',
         last_name: 'Oviedo',
@@ -82,6 +83,7 @@ describe('UserRepository Unit Test', () => {
             const user = await userRepository.create(mockUser);
 
             expect(user).toEqual({ data: [mockUser], error: null });
+            expect(mockbase.insert).toHaveBeenCalledWith(mockUser);
         });
 
         test('insertion failed, returning an error message', async () => {
@@ -101,18 +103,22 @@ describe('UserRepository Unit Test', () => {
 
     describe('update', () => {
         const mockError = { message: `error updating user ${mockUser.first_name}` };
+        const updateUser = { ...mockUser, first_name: 'Ivan', last_name: 'Chen' };
 
         test('update the user and return it', async () => {
             (mockbase.from as jest.Mock).mockReturnThis();
             (mockbase.update as jest.Mock).mockReturnThis();
             (mockbase.select as jest.Mock).mockResolvedValueOnce({
-                data: [mockUser],
+                data: [updateUser],
                 error: null,
             });
 
-            const user = await userRepository.update(mockUser);
+            const user = await userRepository.update(mockUser.id, updateUser);
 
-            expect(user).toEqual({ data: [mockUser], error: null });
+            expect(user.data).toEqual([updateUser]);
+
+            expect(mockbase.update).toHaveBeenCalledWith(updateUser);
+            expect(mockbase.eq).toHaveBeenCalledWith('id', mockUser.id);
         });
 
         test('failed to update user data', async () => {
@@ -123,10 +129,13 @@ describe('UserRepository Unit Test', () => {
                 error: mockError,
             });
 
-            const user = await userRepository.update(mockUser);
+            const user = await userRepository.update(mockUser.id, updateUser);
 
             expect(user.data).toBeNull();
             expect(user.error).toEqual(mockError);
+
+            expect(mockbase.update).toHaveBeenCalledWith(updateUser);
+            expect(mockbase.eq).toHaveBeenCalledWith('id', mockUser.id);
         });
     });
 
@@ -188,7 +197,7 @@ describe('UserRepository Unit Test', () => {
 // Integration Test
 describe('UserRepository Integration Test', () => {
     const testId = Math.floor(Math.random() * 100);
-    const testUser: User = {
+    const testUser: UserFilter = {
         id: testId,
         auth_id: null,
         created_at: '2025-03-18T04:19:14.794006+00:00',
@@ -196,9 +205,6 @@ describe('UserRepository Integration Test', () => {
         email: 'johnwow@gmail.com',
         first_name: 'John',
         last_name: 'Doe',
-        phone_number: '1234567890',
-        timezone: '2025-03-18T04:19:14.794006+00:00',
-        updated_at: '2025-03-18T04:19:14.794006+00:00',
     };
 
     beforeAll(() => {
@@ -206,14 +212,14 @@ describe('UserRepository Integration Test', () => {
     });
 
     afterAll(async () => {
-        await supabase.from('users').delete().eq('id', testId);
+        await userRepository.delete(testId);
     });
 
     describe('create', () => {
         test('creating a new user', async () => {
             const user = await userRepository.create(testUser);
 
-            expect(user.data).toEqual([testUser]);
+            expect(user.data).toMatchObject([testUser]);
             expect(user.error).toBeNull();
         });
 
@@ -222,6 +228,7 @@ describe('UserRepository Integration Test', () => {
 
             expect(user.data).toBeNull();
             expect(user.error).not.toBeNull();
+            expect(user.error.message).toContain('duplicate key value violates unique constraint');
         });
     });
 
@@ -229,13 +236,12 @@ describe('UserRepository Integration Test', () => {
         test('retrieving user by id', async () => {
             const user = await userRepository.read(testUser.id);
 
-            expect(user.data).toEqual([testUser]);
+            expect(user.data).toMatchObject([testUser]);
             expect(user.error).toBeNull();
         });
 
         test('failed to retrieve user by id', async () => {
-            const nonExistentUserId = 1000002;
-            const user = await userRepository.read(nonExistentUserId);
+            const user = await userRepository.read(10000000000000);
 
             expect(user.data).toEqual([]);
             expect(user.error).toBeNull();

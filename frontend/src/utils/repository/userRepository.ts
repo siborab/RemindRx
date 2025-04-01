@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { User } from '@/types/UserData';
+import { User, UserFilter, UserList } from '@/types/UserData';
 
 class UserRepository {
     private supabase: SupabaseClient;
@@ -8,8 +8,13 @@ class UserRepository {
         this.supabase = supabase;
     }
 
-    public async read(filter: number | undefined): Promise<{ data: User[] | null, error: any }> {
-        const { data, error } = await this.supabase.from('users').select('*').eq('id', filter);
+    public async read(id: number | undefined): Promise<{ data: User[] | null, error: any }> {
+
+        if (id === undefined) {
+            return { data: null, error: 'Please provide a id for the filter' };
+        }
+
+        const { data, error } = await this.supabase.from('users').select('*').eq('id', id);
 
         if (error) {
             console.error('Error fetching users', error);
@@ -19,7 +24,11 @@ class UserRepository {
         return { data, error };
     }
 
-    public async create(filter: User | User[]): Promise<{ data: User[] | null, error: any }> {
+    public async create(filter: UserFilter | UserList | undefined): Promise<{ data: User[] | null, error: any }> {
+        if (filter === undefined) {
+            return { data: null, error: 'Please provide content to insert' };
+        }
+
         const { data, error } = await this.supabase.from('users').insert(filter).select();
 
         if (error) {
@@ -30,8 +39,12 @@ class UserRepository {
         return { data, error };
     }
 
-    public async update(filter: User): Promise<{ data: User[] | null, error: any }> {
-        const { data, error } = await this.supabase.from('users').update(filter).select();
+    public async update(id: number | undefined, filter: UserFilter | undefined): Promise<{ data: User[] | null, error: any }> {
+        if (id === undefined || filter === undefined) {
+            return { data: null, error: 'Missing fields for id or content to update' };
+        }
+
+        const { data, error } = await this.supabase.from('users').update(filter).eq('id', id).select();
 
         if (error) {
             console.error('Error updating user', error);
@@ -42,14 +55,18 @@ class UserRepository {
     }
 
 
-    public async delete(filter: number | Array<number>): Promise<{ data: User[] | null, error: any }> {
+    public async delete(id: number | Array<number> | undefined): Promise<{ data: User[] | null, error: any }> {
+        if (id === undefined) {
+            return { data: null, error: 'Please provide a filter for deletion' };
+        }
+
         let query = this.supabase
             .from('users')
             .delete();
-        if (typeof filter !== 'number') {
-            query = query.in('id', filter);
+        if (typeof id !== 'number') {
+            query = query.in('id', id);
         } else {
-            query = query.eq('id', filter);
+            query = query.eq('id', id);
         }
 
         const { data, error } = await query.select();
