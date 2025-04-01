@@ -42,6 +42,7 @@ jobs:
         with:
           node-version: 23.0.0
       - name: Install Dependencies
+        working-directory: ./frontend
         run: npm install
       - name: install playwright browsers
         run: npx playwright install --with-deps
