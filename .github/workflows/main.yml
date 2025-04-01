@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 23.0.0
       - name: Install Dependencies
+        working-directory: ./frontend
         run: npm install
       - name: Run Tests
         env:
@@ -24,10 +25,13 @@ jobs:
         run: npm test
       - name: Code Coverage
         run: npm run coverage
-      - name: Upload Coverage with Codecov
-        uses: codecov/codecov-action@v5
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
   run-e2e-tests:
     runs-on: ubuntu-latest
     steps:
@@ -51,3 +55,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
         run: npx playwright test
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
