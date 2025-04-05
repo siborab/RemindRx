@@ -37,7 +37,7 @@ describe('Logout Component', () => {
     await fireEvent.click(button);
 
     expect(supabase.auth.signOut).toHaveBeenCalled();
-    expect(mockRouterPush).toHaveBeenCalledWith('/');
+    expect(mockRouterPush).toHaveBeenCalledWith('/signin');
   });
 
   it('handles logout error', async () => {
