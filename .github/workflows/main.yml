@@ -37,6 +37,7 @@ jobs:
         run: |
           echo "URL is set: ${NEXT_PUBLIC_SUPABASE_URL:+yes}"
           echo "Key is set: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:+yes}"
+        working-directory: ./frontend
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -48,14 +49,18 @@ jobs:
           node-version: 23.0.0
       - name: Install Dependencies
         run: npm install
+        working-directory: ./frontend
       - name: install playwright browsers
         run: npx playwright install --with-deps
+        working-directory: ./frontend
       - name: Build Application
         run: npm run build
+        working-directory: ./frontend
         env:
             NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - name: Run Tests
+        working-directory: ./frontend
         env:
             NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
