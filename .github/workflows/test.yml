@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest  # Or macos-latest for macOS
     environment: development
-    
+
     steps:
       # Checkout the code from the repository
       - name: Checkout code
@@ -25,9 +25,17 @@ jobs:
         uses: nicknovitski/nix-develop@v1
 
       # Run tests with pytest inside the scanner folder
-      - name: Run scanner tests
-        run: pytest tests # Run pytest in the scanner folder
+      - name: Install dependencies and run tests
+        run: |
+          nix develop 
         env:
           SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
           SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
+      
+          # - name: Run scanner tests
+      #   run: pytest tests # Run pytest in the scanner folder
+      #   env:
+      #     SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+      #     SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
 
+# --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
