@@ -26,7 +26,7 @@ export async function signin (state: any, formData: FormData) {
 
     if (error) {
         console.error(error);
+    } else {
+        redirect('/home');
     }
-
-    redirect('/home')
 }
