@@ -4,6 +4,7 @@ import pickle #for saving and loading models
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 dummy_data= {  #defining some data. will append more times and descriptions later
     "prescription_description": ["Take one tablet twice daily", "Take one tablet once daily", "Take one tablet thrice daily", "Take two tablets once a day", 'Take one tablet three times a day'],
@@ -33,6 +34,10 @@ def predict_times(description): #hardcoded recommender function
     try:
         if not isinstance(description, str): #validate input datatype to be string
                 raise ValueError("Description must be a string")
+        
+        if not description.strip() or description=='': ##check if the string is empty or contains only whitespace
+            return ["No matching times found"]
+        
         with open("vectorizer.pkl", "rb") as f: #should be testing-safe
             vectorizer = pickle.load(f)
 
@@ -43,6 +48,16 @@ def predict_times(description): #hardcoded recommender function
             mlb = pickle.load(f)
 
         desc_vectorized = vectorizer.transform([description])
+
+        training_descriptions = dummy_data["prescription_description"] #get the training descriptions from the dummy data
+        train_tfidf = vectorizer.transform(training_descriptions)
+        similarities = cosine_similarity(desc_vectorized, train_tfidf)
+        max_sim = similarities.max()
+        # If the maximum similarity is below a threshold, consider it a bad match.
+        if max_sim < 0.3:
+            return ["No matching times found"]
+
+        #if we pass similarity check, we can proceed to predict the times
         predicted_labels = clf.predict(desc_vectorized)
         predicted_times = mlb.inverse_transform(predicted_labels)
 
@@ -56,7 +71,7 @@ def predict_times(description): #hardcoded recommender function
         return [f"Bad Output: {str(e)}"] #return the error if something goes wrong
     
     
-'''
+''''
 #example usage 
 
 user_input = input("Enter a prescription description: ")

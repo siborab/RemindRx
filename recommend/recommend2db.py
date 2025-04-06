@@ -16,11 +16,11 @@ def recommend2db(text):
     response= supabase.table("prescriptions").select("recommended_times").execute()
     #print(response.data)
     #print("Inserting a new prescription into the database hopefully...")
-    supabase.table("prescriptions").insert({"recommended_times": predict_times(text)}).execute() # try text for "Take one tablet twice daily"
-    response= supabase.table("prescriptions").select("recommended_times").execute()
+    supabase.table("prescriptions").insert({"description": text, "recommended_times": predict_times(text)}).execute() # try text for "Take one tablet twice daily"
+    response = supabase.table("prescriptions").select("recommended_times").order("created_at", desc=True).limit(1).execute() #get latest entry and ensure order by created_at desc
+
     all_lists = [row["recommended_times"] for row in response.data]
-    return all_lists[-1:] #return the last entry in the list of prescriptions. this is a hacky way to do it but it works for now
-    #print(all_lists)
+    return all_lists  # return the latest entry (as a list)
 
 def delete(time):
 
