@@ -2,18 +2,18 @@ import os
 import sys
 import tempfile
 import io
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) #add the parent directory to the path
 from scanner.e2e_scanner2db import scan_and_recommend
 
  
 def create_test_image(text): #function to create a test image with text
-    image = Image.new("RGB", (800, 300), color="white")
+    image = Image.new("RGB", (1200, 400), color="white")
     draw = ImageDraw.Draw(image)
     
     try:
-        font = ImageFont.truetype("arial.ttf", 40) #using a truetype font
+        font = ImageFont.truetype("arial.ttf", 60) #using a truetype font and big font size
     except IOError:
         font = ImageFont.load_default()
 
@@ -24,6 +24,9 @@ def create_test_image(text): #function to create a test image with text
 
     draw.text(position, text, font=font, fill="black") #draw the text on the image
     
+    image = image.convert("L") #convert to grayscale to improve OCR accuracy
+    image = ImageOps.autocontrast(image)
+
     #savse the image into a BytesIO buffer
     img_byte_arr = io.BytesIO()
     image.save(img_byte_arr, format="PNG")
