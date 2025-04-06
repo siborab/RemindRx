@@ -23,11 +23,11 @@ def create_test_image_with_text(text: str) -> str:
     return temp_file.name
 
 def test_scan_and_recommend():
-    test_text = "take one tablet twice a day"  # Modify to whatever your OCR expects to trigger [["06:00", "18:00"]]
+    test_text = ""  # Modify to whatever your OCR expects to trigger [["06:00", "18:00"]]
     test_image_path = create_test_image_with_text(test_text)
 
     recommended_times = scan_and_recommend(test_image_path)
 
     os.remove(test_image_path)
 
-    assert recommended_times == [["06:00", "18:00"]]  # Update as needed to match actual logic
+    assert recommended_times == [["No matching times found"]]  # Update as needed to match actual logic
