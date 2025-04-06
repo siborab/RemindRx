@@ -39,3 +39,4 @@ terraform.rc
 
 .pytest_cache
 *.pyc
+*.pkl
