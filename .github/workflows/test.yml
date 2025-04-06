@@ -27,7 +27,7 @@ jobs:
       # Run tests with pytest inside the scanner folder
       - name: Install dependencies and run tests
         run: |
-          nix develop 
+          nix develop --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
         env:
           SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
           SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase

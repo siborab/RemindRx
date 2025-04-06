@@ -47,8 +47,6 @@
             ];
 
             shellHook = ''
-              # export PATH="$HOME/.local/bin:$PATH"
-
               echo "🐍 Activating Python virtual environment..."
 
               if [ ! -d .venv ]; then
