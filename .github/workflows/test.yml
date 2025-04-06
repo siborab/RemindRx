@@ -22,13 +22,15 @@ jobs:
       # Set up Nix environment using nix-develop action
       - name: Set up Nix environment
         uses: nicknovitski/nix-develop@v1
-      
-
+          
       # Install dependencies using pip
       - name: Install dependencies
         run: pip install -r requirements.txt #hopefully this resolves the supabase import error
 
       # Run tests with pytest inside the scanner folder
       - name: Run tests
-        run: pytest tests # Run pytest in the scanner folder
+        run: pytest tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }} #these should be able to pull from the secrets in the repo
 

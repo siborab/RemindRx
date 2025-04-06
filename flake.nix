@@ -43,6 +43,7 @@
 
             shellHook = ''
               export PATH="$HOME/.local/bin:$PATH"
+              pip install --user supabase 
             '';
           };
         };

@@ -5,9 +5,13 @@ from recommend.recommendation import predict_times
 
 def recommend2db(text):
 
-    load_dotenv('../.env') #pathing for my env in root
+    load_dotenv(os.path.join(os.path.dirname(__file__), "../.env")) #pathing for my env in root
     url= os.getenv("SUPABASE_URL")
     key= os.getenv("SUPABASE_KEY")
+
+    if not url or not key:
+        raise EnvironmentError("Missing or invalid Supabase URL or key. Please check thee .env file.")
+
     supabase = create_client(url, key)
     response= supabase.table("prescriptions").select("recommended_times").execute()
     #print(response.data)
@@ -20,10 +24,14 @@ def recommend2db(text):
 
 def delete(time):
 
-    load_dotenv('../.env') #pathing for my env in root
+    load_dotenv(os.path.join(os.path.dirname(__file__), "../.env")) #pathing for my env in root
 
     url= os.getenv("SUPABASE_URL")
     key= os.getenv("SUPABASE_KEY")
+    
+    if not url or not key:
+        raise EnvironmentError("Missing or invalid Supabase URL or key. Please check thee .env file.")
+
     supabase = create_client(url, key)
     response = supabase.table("prescriptions").delete().eq("recommended_times", ["06:00", "18:00"]).execute() #if the insert works it'll delete this from the database
     return response
