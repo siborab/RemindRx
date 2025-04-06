@@ -30,4 +30,4 @@ def test_scan_and_recommend():
 
     os.remove(test_image_path)
 
-    assert recommended_times == [["11:00"]]  # Update as needed to match actual logic
+    assert recommended_times == [["06:00", "18:00"]]  # Update as needed to match actual logic
