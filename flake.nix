@@ -49,21 +49,24 @@
             shellHook = ''
               echo "🐍 Activating Python virtual environment..."
 
-              if [ ! -d .venv ]; then
-                echo "Creating virtualenv..."
-                python -m venv .venv
-                source .venv/bin/activate
-                pip install --upgrade pip setuptools wheel
-
-                # Your pip dependencies
-                pip install -r requirements.txt
+              if [ -z "$CI" ]; then
+                if [ ! -d .venv ]; then
+                  echo "Creating virtualenv..."
+                  python -m venv .venv
+                  source .venv/bin/activate
+                  pip install --upgrade pip setuptools wheel
+                  pip install -r requirements.txt
+                else
+                  source .venv/bin/activate
+                fi
               else
-                source .venv/bin/activate
+                echo "CI environment detected — skipping local virtualenv setup."
               fi
 
               echo "✅ Virtual environment ready!"
+              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH
+            '';
 
-              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH'';
           };
         };
 
