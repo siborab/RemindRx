@@ -6,7 +6,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils }: 
     flake-utils.lib.eachDefaultSystem (system:
       let 
         pkgs = import nixpkgs {
@@ -20,58 +20,57 @@
 
         pythonPackages = pkgs.python.pkgs;
 
-        # Define a derivation for the supabase package from PyPI.
-        supabase = pythonPackages.buildPythonPackage rec {
-          pname = "supabase";
-          version = "2.13.0";  # Replace with the desired version from PyPI
-          src = pkgs.fetchPypi {
-            inherit pname version;
-            # Replace the sha256 with the one computed for that version.
-            sha256 = "sha256-RSV000vZeMjRG18CsBgrSOiFTlEclpSDyDh17AFJXxE=";
-          };
-          format = "pyproject";
-          usePep517 = true;
-          nativeBuildInputs = [ pythonPackages.poetry-core ];
-
-          # pythonRuntimeDepsCheckHook = "";
-          # checkPhase = "echo 'Skipping runtime dependency check'";
-          meta = with pkgs.lib; {
-            description = "Supabase Python client library";
-            license = licenses.mit;
-          };
-        };
-
-        my-python-env = pkgs.python.withPackages (ps: with ps; [
-          numpy
-          opencv4
-          pillow
-          pytesseract
-          scikit-learn
-          pytest
-          pytest-cov
-          pandas
-          python-dotenv
-          pip
-          supabase  # Add the custom supabase package here
-        ]);
+        # my-python-env = pkgs.python.withPackages (ps: with ps; [
+        #   numpy
+        #   opencv4
+        #   pillow
+        #   pytesseract
+        #   scikit-learn
+        #   pytest
+        #   pytest-cov
+        #   pandas
+        #   scikit-learn
+	      #   pip
+        # ]);
 
       in {
         devShells = {
           default = pkgs.mkShell {
             buildInputs = [
-              my-python-env
+              # my-python-env
               pkgs.tesseract
+              pkgs.stdenv.cc.cc
+              pkgs.stdenv.cc.cc.lib
+              pkgs.libGL
+              pkgs.glib
               pkgs.git
             ];
 
             shellHook = ''
-              export PATH="$HOME/.local/bin:$PATH"
-            '';
+              # export PATH="$HOME/.local/bin:$PATH"
+
+              echo "🐍 Activating Python virtual environment..."
+
+              if [ ! -d .venv ]; then
+                echo "Creating virtualenv..."
+                python -m venv .venv
+                source .venv/bin/activate
+                pip install --upgrade pip setuptools wheel
+
+                # Your pip dependencies
+                pip install -r requirements.txt
+              else
+                source .venv/bin/activate
+              fi
+
+              echo "✅ Virtual environment ready!"
+
+              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH'';
           };
         };
 
         packages = {
-          default = my-python-env;
+          # default = my-python-env;
         };
       }
     );
