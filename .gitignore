@@ -38,3 +38,4 @@ terraform.rc
 .venv
 
 .pytest_cache
+*.pyc
