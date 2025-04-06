@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run OCR Tests
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ jobs:
     steps:
       # Checkout the code from the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Download nix 
         uses: cachix/install-nix-action@v31
@@ -24,6 +24,6 @@ jobs:
         uses: nicknovitski/nix-develop@v1
 
       # Run tests with pytest inside the scanner folder
-      - name: Run tests
+      - name: Run scanner tests
         run: pytest tests # Run pytest in the scanner folder
 

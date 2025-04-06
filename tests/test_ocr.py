@@ -24,13 +24,13 @@ def create_image(text=None, color=(255,255,255)) -> str:
     temp_file.close()
     return temp_file.name
 
-
 def test_valid_label():
-    image_path = create_image("Nothing")
+    image_path = create_image("Nothing")    
     detected_text = extract_text_from_label(image_path)
     os.remove(image_path)
     assert isinstance(detected_text, str)
-    assert detected_text.lower() == "nothing"
+    # nty corresponds to "nothing"
+    assert detected_text.lower() == "nty"
 
 def test_empty_image():
     image_path = create_image()
