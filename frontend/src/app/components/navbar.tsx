@@ -1,17 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Pill, Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase/client";
 import { Logout } from "./logout";
+import { useAuth } from "../providers/authprovider";
 
-interface Props {
-    isLoggedIn: boolean
-}
 
-export default function Navbar({isLoggedIn}: Props) {
+export default function Navbar() {
+  const { isAuthenticated } = useAuth();
 
     return (
         <div className="sticky top-0 z-50 w-full shadow-lg bg-purple-400/20 h-16 flex items-center justify-between px-6">
@@ -22,7 +18,7 @@ export default function Navbar({isLoggedIn}: Props) {
                 </Link>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                     <>
                     <Link
                         href="/home"
