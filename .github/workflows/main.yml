@@ -33,6 +33,13 @@ jobs:
       run:
         working-directory: ./frontend
     steps:
+      - name: Check ENV presence (non-sensitive)
+        run: |
+          echo "URL is set: ${NEXT_PUBLIC_SUPABASE_URL:+yes}"
+          echo "Key is set: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:+yes}"
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
@@ -46,8 +53,8 @@ jobs:
       - name: Build Application
         run: npm run build
         env:
-            NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-            NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
+            NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - name: Run Tests
         env:
             NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
