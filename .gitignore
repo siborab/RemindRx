@@ -34,3 +34,4 @@ override.tf.json
 terraform.rc
 
 sms_project_env/
+.DS_Store
