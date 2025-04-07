@@ -66,10 +66,13 @@ export default function PillCard({prescription}: Props) {
             </div>
             <div >
                 <div className="flex flex-col">
-                    <div
-                        className={`font-medium text-lg cursor-pointer ${isChecked ? "line-through text-muted-foreground" : ""}`}
-                    >
-                        {prescription.medication ? prescription.medication : 'No name'}
+                    <div className="">
+                        <div
+                            className={`font-medium text-lg cursor-pointer ${isChecked ? "line-through text-muted-foreground" : ""}`}
+                        >
+                            {prescription.medication ? prescription.medication : 'No name'}
+                        </div>
+                        <div className="">Recommended Time: {prescription.recommended_time}</div>
                     </div>
                     <div className="text-md flex items-center gap-1 pb-1">
                         {prescription.amount}mg - {prescription.description}
