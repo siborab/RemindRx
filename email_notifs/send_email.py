@@ -24,7 +24,8 @@ EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # Set up logging
-logging.basicConfig(filename='medication_reminder.log', level=logging.INFO, 
+LOG_PATH = os.path.join(os.path.dirname(__file__), 'medication_reminder.log')
+logging.basicConfig(filename=LOG_PATH, level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_due_medications():
