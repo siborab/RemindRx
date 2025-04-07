@@ -30,7 +30,7 @@ export function Logout() {
             await refreshAuthState();
             toast.success('Logged out successfully');
             
-            window.location.href = "/signin";
+            router.push('/signin')
         } catch (err) {
             console.error("Logout failed:", err);
             toast.error("Something went wrong");
