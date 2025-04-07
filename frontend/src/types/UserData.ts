@@ -8,12 +8,8 @@ export interface Prescription {
     patient: number, 
     description: string,
     amount: number,
-    frequency: string,
-    refills: number, 
     refill_time: string,
-    next_scheduled_time: string,
-    last_taken_at: string,
-    created_at: string,
-    updated_at: string,
-    id: number
+    last_taken_at: string | null,
+    id: number,
+    recommended_time: string
 }
