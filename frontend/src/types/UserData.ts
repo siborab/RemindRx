@@ -12,8 +12,6 @@ export interface Prescription {
     refills: number, 
     refill_time: string,
     next_scheduled_time: string,
-    last_taken_at: string,
-    created_at: string,
-    updated_at: string,
+    last_taken_at: string | null,
     id: number
 }
