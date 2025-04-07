@@ -31,28 +31,19 @@ function formatDateToCustomUTC(date: Date): string {
 export default function PillCard({prescription}: Props) {
 
     const [isChecked, setIsChecked] = useState<boolean>();
+    const [newlastTaken, setNewLastTaken] = useState<string>(prescription.last_taken_at!);
 
     useEffect(() => {
         if (prescription.last_taken_at) {
-          const takenDate = new Date(prescription.last_taken_at)
-          const now = new Date()
+          const takenDate = new Date(prescription.last_taken_at);
+          const now = new Date();
     
           const isSamePastDay =
             takenDate.getFullYear() >= now.getFullYear() &&
             takenDate.getMonth() >= now.getMonth() &&
-            takenDate.getDate() >= now.getDate()
-
-          if (!isSamePastDay) {
-            setIsChecked(false);
-            return;
-          }
-
-          const takenMinutes = takenDate.getHours() * 60 + takenDate.getMinutes();
-          const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            takenDate.getDate() >= now.getDate();
         
-          const takenOnTime = takenMinutes >= nowMinutes;
-        
-          setIsChecked(takenOnTime);
+          setIsChecked(isSamePastDay);
     }}, [prescription.last_taken_at])
 
     async function handleCheck() {
@@ -60,7 +51,13 @@ export default function PillCard({prescription}: Props) {
             setIsChecked(true)
             const now = new Date()
             const formattedDate = formatDateToCustomUTC(now);
-            toast.success(formattedDate)
+            const response = await supabase.from('prescriptions').update({'last_taken_at': formattedDate}).eq('patient', 6).eq('id', prescription.id);
+            if (response.error) {
+                toast.error('Something went wrong checking off:' + prescription.medication)
+            } else {
+                toast.success('Successfully checked ' + prescription.medication);
+                setNewLastTaken(formattedDate);
+            }
         }
     }
     
@@ -87,7 +84,7 @@ export default function PillCard({prescription}: Props) {
                         {prescription.amount}mg - {prescription.description}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                        Last taken at: {prescription.last_taken_at}
+                        Last taken at: {newlastTaken}
                     </div>
                     <div className="text-sm text-muted-foreground">
                         Refill Time: {prescription.refill_time}
