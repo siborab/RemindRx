@@ -8,7 +8,6 @@ import { Prescription } from "@/types/UserData";
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import Loading from "@/app/components/loading";
-import { Button } from "@/components/ui/button"
 
 export default function HomePage () {
   const userInfo = useAtomValue(userAtom);
@@ -19,11 +18,19 @@ export default function HomePage () {
   useEffect(() => {
     async function getPrescriptionData() {
       setLoading(true);
-  
+
+      const response = await supabase.rpc('execute_sql', {
+
+      })
+      const { data, error } = await supabase.rpc('expand_recommended_times', { patient_id: 6 });
+
+      console.log(data);
+
+      /*
       const { data, error } = await supabase
         .from('prescriptions')
         .select('*')
-        .eq('patient', 6); 
+        .eq('patient', 6); */
   
       if (error) {
         console.error("Error fetching prescriptions:", error);
