@@ -37,14 +37,23 @@ export default function PillCard({prescription}: Props) {
           const takenDate = new Date(prescription.last_taken_at)
           const now = new Date()
     
-          const isSameDay =
-            takenDate.getFullYear() === now.getFullYear() &&
-            takenDate.getMonth() === now.getMonth() &&
-            takenDate.getDate() === now.getDate()
-    
-          setIsChecked(isSameDay)
-        }
-    }, [prescription.last_taken_at])
+          const isSamePastDay =
+            takenDate.getFullYear() >= now.getFullYear() &&
+            takenDate.getMonth() >= now.getMonth() &&
+            takenDate.getDate() >= now.getDate()
+
+          if (!isSamePastDay) {
+            setIsChecked(false);
+            return;
+          }
+
+          const takenMinutes = takenDate.getHours() * 60 + takenDate.getMinutes();
+          const nowMinutes = now.getHours() * 60 + now.getMinutes();
+        
+          const takenOnTime = takenMinutes >= nowMinutes;
+        
+          setIsChecked(takenOnTime);
+    }}, [prescription.last_taken_at])
 
     async function handleCheck() {
         if (!isChecked) {
