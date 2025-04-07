@@ -33,7 +33,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: unit-tests-report
-          path: frontend/unit-tests-report/
+          path: frontend/coverage/
           retention-days: 30
   run-e2e-tests:
     runs-on: ubuntu-latest
