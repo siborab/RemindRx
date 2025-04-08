@@ -34,4 +34,3 @@ override.tf.json
 terraform.rc
 
 .env
-sms_project_env/
