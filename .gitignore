@@ -37,6 +37,15 @@ terraform.rc
 .env
 .venv
 
+flake_old.nix
+test_e2e.py
+flake2.nix
+
+*.pkl
+
+__pycache__/
+
+
 .pytest_cache
 *.pyc
 *.pkl

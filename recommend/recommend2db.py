@@ -5,7 +5,7 @@ from recommend.recommendation import predict_times
 
 def recommend2db(text):
 
-    load_dotenv(dotenv_path='../.env', override=True)   #pathing for my env in root
+    load_dotenv(dotenv_path='.env', override=True)   #pathing for my env in root
     url= os.getenv("SUPABASE_URL")
     key= os.getenv("SUPABASE_KEY")
 
@@ -24,7 +24,7 @@ def recommend2db(text):
 
 def delete(time):
 
-    load_dotenv(dotenv_path='../.env', override=True)   #pathing for my env in root
+    load_dotenv(dotenv_path='.env', override=True)   #pathing for my env in root
 
     url= os.getenv("SUPABASE_URL")
     key= os.getenv("SUPABASE_KEY")

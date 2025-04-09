@@ -20,38 +20,60 @@
 
         pythonPackages = pkgs.python.pkgs;
 
-        my-python-env = pkgs.python.withPackages (ps: with ps; [
-          numpy
-          opencv4
-          pillow
-          pytesseract
-          scikit-learn
-          pytest
-          pytest-cov
-          pandas
-          scikit-learn
-        ]);
+        # my-python-env = pkgs.python.withPackages (ps: with ps; [
+        #   numpy
+        #   opencv4
+        #   pillow
+        #   pytesseract
+        #   scikit-learn
+        #   pytest
+        #   pytest-cov
+        #   pandas
+        #   scikit-learn
+	      #   pip
+        # ]);
 
       in {
         devShells = {
           default = pkgs.mkShell {
             buildInputs = [
-              my-python-env
+              # my-python-env
               pkgs.tesseract
+              pkgs.stdenv.cc.cc
+              pkgs.stdenv.cc.cc.lib
+              pkgs.libGL
+              pkgs.glib
               pkgs.git
             ];
 
             shellHook = ''
-              export PATH="$HOME/.local/bin:$PATH"
+              echo "🐍 Activating Python virtual environment..."
+
+              if [ -z "$CI" ]; then
+                if [ ! -d .venv ]; then
+                  echo "Creating virtualenv..."
+                  python -m venv .venv
+                  source .venv/bin/activate
+                  pip install --upgrade pip setuptools wheel
+                  pip install -r requirements.txt
+                else
+                  source .venv/bin/activate
+                fi
+              else
+                echo "CI environment detected — skipping local virtualenv setup."
+              fi
+
+              echo "✅ Virtual environment ready!"
+              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH
               pip install --user supabase 
             '';
+
           };
         };
 
         packages = {
-          default = my-python-env;
+          # default = my-python-env;
         };
       }
     );
 }
-

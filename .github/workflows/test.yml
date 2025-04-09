@@ -27,11 +27,31 @@ jobs:
       # Set up Nix environment using nix-develop action
       - name: Set up Nix environment
         uses: nicknovitski/nix-develop@v1
-          
-      # install python dependencies using nix then run tests
+
+      # Run tests with pytest inside the scanner folder
+      # - name: Install dependencies and run tests
+      #   run: |
+      #     nix develop --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
+      #   env:
+      #     SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+      #     SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
+      
       - name: Install dependencies and run tests
         run: |
-          nix develop --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
+          nix develop --command sh -c "
+            python -m venv .venv
+            source .venv/bin/activate
+            pip install -r requirements.txt
+            pytest tests
+          "
         env:
           SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
-          SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
+          SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}"
+
+          # - name: Run scanner tests
+      #   run: pytest tests # Run pytest in the scanner folder
+      #   env:
+      #     SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+      #     SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
+
+# --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
