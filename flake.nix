@@ -43,6 +43,7 @@
               pkgs.stdenv.cc.cc.lib
               pkgs.libGL
               pkgs.glib
+              pkgs.glibc
               pkgs.git
             ];
 
@@ -64,7 +65,7 @@
               fi
 
               echo "✅ Virtual environment ready!"
-              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH
+              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.glibc}/lib:$LD_LIBRARY_PATH
             '';
 
           };
