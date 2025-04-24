@@ -13,6 +13,7 @@ def scan_and_recommend(file_path):
     recommended_times = recommend2db(text)
     
     return recommended_times
-# file_path = os.path.join(os.path.dirname(__file__), "images", "white.jpg") #file path for the test image
-# recommended_times = scan_and_recommend(file_path)
-# print(recommended_times)
+'''
+file_path = os.path.join(os.path.dirname(__file__), "images", "test_description.png") #file path for the test image
+recommended_times = scan_and_recommend(file_path)
+print(recommended_times)'''
