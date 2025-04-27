@@ -1,0 +1,49 @@
+import os
+from flask import Blueprint, request, jsonify
+from flask_cors import CORS
+from scanner.model import extract_text_from_label
+import tempfile
+
+
+models_api = Blueprint("models_api", "models_api", url_prefix="/api/models")
+
+CORS(models_api)
+
+
+@models_api.route("/", methods=["GET"])
+def index():
+    return jsonify("Models API is working!")
+
+@models_api.route("/scan", methods=["POST"])
+def scan():
+    
+    if request.method == "GET":
+        return jsonify({"error": "Wrong method used"})
+    
+    if "image" not in request.files:
+        return jsonify({"error": "No image part in request"}), 400
+    
+    image  = request.files["image"]
+    
+    if image.filename == '':
+        return jsonify({"error": "No file was selected"}), 400
+    
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_file:
+            image.save(tmp_file.name)
+            tmp_file_path = tmp_file.name
+            
+        extracted_text = extract_text_from_label(tmp_file_path)
+        
+        os.remove(tmp_file_path)
+        
+        return jsonify({"text": extracted_text})
+
+    except FileNotFoundError as e:
+       return jsonify({"error": str(e)}), 500 
+   
+    except ValueError as e:
+       return jsonify({"error": str(e)}), 500 
+    
+    except Exception as e:
+       return jsonify({"error": f"Unexpected error: {str(e)}"}), 500 
