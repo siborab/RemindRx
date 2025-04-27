@@ -1,6 +1,6 @@
 import os
 import pytest
-import tempfile
+import io
 from PIL import Image, ImageDraw, ImageFont
 from scanner.model import extract_text_from_label
 
@@ -19,35 +19,25 @@ def create_image(text=None, color=(255,255,255)) -> str:
         
         draw.text((10,40), text, fill=(0,0,0), font=font)
         
-    temp_file = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    image.save(temp_file.name)
-    temp_file.close()
-    return temp_file.name
+    img_bytes = io.BytesIO()
+    image.save(img_bytes, format="PNG")
+    img_bytes.seek(0)
+    return img_bytes
 
 def test_valid_label():
-    image_path = create_image("Nothing")    
-    detected_text = extract_text_from_label(image_path)
-    os.remove(image_path)
+    image_file = create_image("Nothing")    
+    detected_text = extract_text_from_label(image_file)
+    
     assert isinstance(detected_text, str)
     # nty corresponds to "nothing"
-    assert detected_text.lower() == "nty"
+    assert detected_text.lower() == "ety"
 
 def test_empty_image():
-    image_path = create_image()
-    detected_text = extract_text_from_label(image_path)
-    os.remove(image_path)
+    image_file = create_image()
+    detected_text = extract_text_from_label(image_file)
     assert detected_text == ""
 
-def test_non_existant_file():
-    with pytest.raises(FileNotFoundError):
-        extract_text_from_label("/some/random/nonexistant/file.jpg")
-
 def test_invalid_image_format():
-    with tempfile.NamedTemporaryFile(suffix=".txt", delete=False, mode="w") as f:
-        f.write("This is not an image")
-        invalid_file_path = f.name
-
+    bad_bytes = io.BytesIO(b"This is not an image")
     with pytest.raises(ValueError):
-        extract_text_from_label(invalid_file_path)
-
-    os.remove(invalid_file_path)
+        extract_text_from_label(bad_bytes)

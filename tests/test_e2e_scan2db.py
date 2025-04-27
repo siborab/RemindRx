@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 import tempfile
+import io
 from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,17 +18,15 @@ def create_test_image_with_text(text: str) -> str:
         font = None
     draw.text((10, 40), text, fill=(0, 0, 0), font=font)
 
-    temp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-    image.save(temp_file.name)
-    temp_file.close()
-    return temp_file.name
+    img_bytes = io.BytesIO()
+    image.save(img_bytes, format="PNG")
+    img_bytes.seek(0)
+    return img_bytes
 
 def test_scan_and_recommend():
     test_text = ""  # Modify to whatever your OCR expects to trigger [["06:00", "18:00"]]
-    test_image_path = create_test_image_with_text(test_text)
+    test_image = create_test_image_with_text(test_text)
 
-    recommended_times = scan_and_recommend(test_image_path)
-
-    os.remove(test_image_path)
+    recommended_times = scan_and_recommend(test_image)
 
     assert recommended_times == [["No matching times found"]]  # Update as needed to match actual logic
