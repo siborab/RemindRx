@@ -66,9 +66,9 @@ def predict_times(description): #hardcoded recommender function
         else:
             return ["No matching times found"] #if not, then return no matching times found
     except ValueError as ve:
-            return [f"Bad Input: {str(ve)}"] #catch bad value errors as opposed to just bad output
+            return ["No matching times found"] 
     except Exception as e:
-        return [f"Bad Output: {str(e)}"] #return the error if something goes wrong
+        return ["No matching times found"] 
     
     
 ''''
