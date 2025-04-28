@@ -23,7 +23,8 @@ export default function HomePage () {
                               .from('recommended_times')
                               .select(`
                                 recommended_time,
-                                prescriptions (
+                                isTaken,
+                                prescription:prescriptions(*) (
                                   *
                                 )
                               `)

@@ -15,7 +15,8 @@ export interface Prescription {
 
 export interface RecommendedTimePrescription {
     recommended_time: string,
-    prescription: Prescription
+    prescription: Prescription,
+    isTaken: boolean
 }
 
 export type PrescriptionList = Array<Partial<Prescription>>;
