@@ -5,9 +5,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from scanner.model import extract_text_from_label
 from recommend.recommend2db import recommend2db
 
-def scan_and_recommend(file_path):
+def scan_and_recommend(file_like_object):
     # Extract text from the label
-    text = extract_text_from_label(file_path)
+    text = extract_text_from_label(file_like_object)
     
     # Recommend times based on the extracted text
     recommended_times = recommend2db(text)

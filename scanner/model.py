@@ -2,8 +2,7 @@ import cv2
 import os
 import pytesseract
 import numpy as np
-
-
+from PIL import Image
 
 VALID_IMG_TYPES = {'.jpg', '.jpeg', '.png', 'bmp', '.tiff'}
 
@@ -12,21 +11,8 @@ def is_blank_image(image):
     print(mean_intensity)
     return mean_intensity > 250 # if the intensity is closer to 255, we know there is not much variation in the image, i.e., things are the same color with no text on it 
 
-def preprocess_image(image_path): 
-    if not os.path.exists(image_path):
-        raise FileNotFoundError(f"Image at {image_path} could not be found")
-
-    _, extension = os.path.splitext(image_path)
-
-    if extension.lower() not in VALID_IMG_TYPES:
-        raise ValueError(f"Invalid file type: {extension}. Only {', '.join(VALID_IMG_TYPES)} are supported")
-    
-    image = cv2.imread(image_path)
-
-    if image is None:
-        raise ValueError(f"Image at {image_path} could not be read. It may be corrupted or in an unsupported format.")
-
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def preprocess_image_array(image_array): 
+    gray = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
 
     # Apply Gaussian Blur (helps reduce noise)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -39,19 +25,18 @@ def preprocess_image(image_path):
     return thresh
 
 
-def extract_text_from_label(image_path):
+def extract_text_from_label(image_file):
     try:
-        processed_image = preprocess_image(image_path)
-    except FileNotFoundError as e: 
-       print(f"Error: {e}")
-       raise e
-    except ValueError as e:
-        print(f"Error: {e}")
-        raise e
+        img = Image.open(image_file).convert("RGB")
+        img_array = np.array(img)
+        img_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+    except Exception as e:
+        print(f"Error opening image: {e}")
+        raise ValueError(f"Invalid image: {e}")
 
-    # if is_blank_image(processed_image):
-    #     return ""
 
+    processed_image = preprocess_image_array(img_array)   
+    
     # Find contours of text regions
     contours, _ = cv2.findContours(
         processed_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
