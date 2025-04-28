@@ -58,3 +58,21 @@ def upload(db: Client, patient_id, prescription_data: PrescriptionData):
         return True
     else:
         return False
+    
+# takes the patient_id, and text
+def get_email(db: Client, patient_id: int) -> str:
+    """Return the user's email by their id (a.k.a patient_id)."""
+    response = (
+        db.table("users")
+          .select("email")
+          .eq("id", patient_id)       
+          .maybe_single()
+          .execute()
+    )
+
+    if response.data and response.data.get("email"):
+        return response.data["email"]
+
+    raise ValueError(f"No email found for patient_id {patient_id}")
+    
+
