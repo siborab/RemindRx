@@ -1,12 +1,12 @@
-import { Prescription } from "@/types/UserData"
+import { RecommendedTimePrescription } from "@/types/PrecriptionData"
 import PillCard from "./pillCard"
 
 interface Props {
-    prescriptions: Prescription[],
+    prescriptions: RecommendedTimePrescription[],
     timeOfDay: string,
 }
 
-function filterPrescriptions(prescriptions: Prescription[], timeOfDay: string): Prescription[] {
+function filterPrescriptions(prescriptions: RecommendedTimePrescription[], timeOfDay: string): RecommendedTimePrescription[] {
     switch (timeOfDay) {
         case 'Morning':
             return prescriptions.filter((prescription) => {
@@ -45,7 +45,7 @@ export default function TimeOfDay({prescriptions, timeOfDay}: Props) {
     const filteredPrescriptions = filterPrescriptions(prescriptions, timeOfDay);
 
     const pillCards = filteredPrescriptions.map((prescription, index) => {
-        return (<PillCard key={index} prescription={prescription}></PillCard>)
+        return (<PillCard key={index} recommended_time={prescription.recommended_time} prescription={prescription.prescription}></PillCard>)
     })
 
     return (

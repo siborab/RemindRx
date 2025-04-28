@@ -1,6 +1,6 @@
 'use client'
 
-import { Prescription } from "@/types/UserData"
+import { Prescription } from "@/types/PrecriptionData"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState, useEffect } from "react"
 import { supabase } from "@/utils/supabase/client"
@@ -8,6 +8,7 @@ import { toast } from "sonner"
 
 interface Props {
     prescription: Prescription,
+    recommended_time: string
 }
 
 function formatDateToCustomUTC(date: Date): string {
@@ -28,7 +29,7 @@ function formatDateToCustomUTC(date: Date): string {
     )
 }
 
-export default function PillCard({prescription}: Props) {
+export default function PillCard({prescription, recommended_time}: Props) {
 
     const [isChecked, setIsChecked] = useState<boolean>();
     const [newlastTaken, setNewLastTaken] = useState<string>(prescription.last_taken_at!);
@@ -78,7 +79,7 @@ export default function PillCard({prescription}: Props) {
                         >
                             {prescription.medication ? prescription.medication : 'No name'}
                         </div>
-                        <div className="">Recommended Time: {prescription.recommended_time}</div>
+                        <div className="">Recommended Time: {recommended_time}</div>
                     </div>
                     <div className="text-md flex items-center gap-1 pb-1">
                         {prescription.amount}mg - {prescription.description}

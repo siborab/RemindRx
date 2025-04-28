@@ -4,14 +4,14 @@ import { useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atoms"
 import { toast } from "sonner";
 import TimeOfDay from '../components/timeOfDay'
-import { Prescription } from "@/types/UserData";
+import { RecommendedTimePrescription } from "@/types/PrecriptionData";
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import Loading from "@/app/components/loading";
 
 export default function HomePage () {
   const userInfo = useAtomValue(userAtom);
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>([])
+  const [prescriptions, setPrescriptions] = useState<RecommendedTimePrescription[]>([])
   const [loading, setLoading] = useState(true)
 
 
@@ -19,24 +19,23 @@ export default function HomePage () {
     async function getPrescriptionData() {
       setLoading(true);
 
-      const response = await supabase.rpc('execute_sql', {
-
-      })
-      const { data, error } = await supabase.rpc('expand_recommended_times', { patient_id: 6 });
-
-      console.log(data);
-
-      /*
       const { data, error } = await supabase
-        .from('prescriptions')
-        .select('*')
-        .eq('patient', 6); */
+                              .from('recommended_times')
+                              .select(`
+                                recommended_time,
+                                prescriptions (
+                                  *
+                                )
+                              `)
+                              .eq('patient_id', 6)
+                              .returns<RecommendedTimePrescription[]>();
+      console.log(data);
   
       if (error) {
         console.error("Error fetching prescriptions:", error);
         toast.error("Failed to load prescriptions");
       } else {
-        setPrescriptions(data);
+        setPrescriptions(data!);
       }
   
       setLoading(false);

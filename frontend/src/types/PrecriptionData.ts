@@ -13,5 +13,10 @@ export interface Prescription {
     updated_at?: string | null,
 }
 
+export interface RecommendedTimePrescription {
+    recommended_time: string,
+    prescription: Prescription
+}
+
 export type PrescriptionList = Array<Partial<Prescription>>;
 export type PrescriptionFilter = Partial<Prescription>;
