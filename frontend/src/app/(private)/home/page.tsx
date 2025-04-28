@@ -8,6 +8,7 @@ import { RecommendedTimePrescription } from "@/types/PrecriptionData";
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import Loading from "@/app/components/loading";
+import CameraPost from "../components/camera";
 
 export default function HomePage () {
   const userInfo = useAtomValue(userAtom);
@@ -57,9 +58,7 @@ export default function HomePage () {
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">{userInfo?.first_name}'s Prescriptions</h1>
-        <button className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md transition">
-          Add Medication
-        </button>
+        <CameraPost/>
       </div>
 
       <div className="space-y-6">
