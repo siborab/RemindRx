@@ -27,7 +27,6 @@ from scanner.e2e_scanner2db import scan_and_recommend
 def test_scan_and_recommend():
     test_text = ""  # Modify to whatever your OCR expects to trigger [["06:00", "18:00"]]
     test_image = create_high_quality_test_image(test_text)
-
     recommended_times = scan_and_recommend(test_image)
 
-    assert recommended_times == [["No matching times found"]]  # Update as needed to match actual logic
+    assert recommended_times == []  

@@ -3,14 +3,25 @@ import os
 from dotenv import load_dotenv
 from recommend.recommendation import predict_times
 
-def recommend2db(text):
+def recommend2db(text: str):
+
     load_dotenv(dotenv_path='.env', override=True)   #pathing for my env in root
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_KEY")
 
-    if not url or not key:
-        raise EnvironmentError("Missing or invalid Supabase URL or key. Please check the .env file.")
 
+    #exception handling for bad input text
+    #we DO NOT want to insert "No matching times found" into the database
+
+     
+    if not url or not key: #supabase connection check
+        raise EnvironmentError("Missing or invalid Supabase URL or key. Please check thee .env file.")
+    predicted_times = predict_times(text)
+
+    # if model can’t match, quit early
+    if "No matching times found" in predicted_times:
+        return []
+    
     supabase = create_client(url, key)
     response= supabase.table("prescriptions").select("recommended_times").execute()
     #print(response.data)
