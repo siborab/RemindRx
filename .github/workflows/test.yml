@@ -1,9 +1,11 @@
-name: Run OCR Tests
+name: Run Backend Tests
 
 on:
+  push:
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:

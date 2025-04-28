@@ -2,7 +2,7 @@ import cv2
 import os
 import pytesseract
 import numpy as np
-from PIL import Image
+from PIL import Image,ImageOps
 
 VALID_IMG_TYPES = {'.jpg', '.jpeg', '.png', 'bmp', '.tiff'}
 
@@ -25,41 +25,35 @@ def preprocess_image_array(image_array):
     return thresh
 
 
-def extract_text_from_label(image_file):
+def extract_text_from_label(image_file) -> str:
+    """
+    Reads a BytesIO / file-like object or a file path,
+    runs a quick pre-process, then OCRs it with Tesseract.
+    """
+    # 1) rewind if it’s a BytesIO / open file handle
+    if hasattr(image_file, "seek"):
+        image_file.seek(0)
+
+    # 2) load & validate
     try:
-        img = Image.open(image_file).convert("RGB")
-        img_array = np.array(img)
-        img_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+        img = Image.open(image_file)
     except Exception as e:
-        print(f"Error opening image: {e}")
-        raise ValueError(f"Invalid image: {e}")
+        raise ValueError("Invalid image") from e
 
-
-    processed_image = preprocess_image_array(img_array)   
-    
-    # Find contours of text regions
-    contours, _ = cv2.findContours(
-        processed_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    # 3) make the text pop (grayscale → upscale → autocontrast)
+    img = (
+        img.convert("L")                                   # to gray
+           .resize((img.width * 2, img.height * 2), Image.BICUBIC)
     )
+    img = ImageOps.autocontrast(img)
 
-    extracted_texts = []
+    # 4) OCR – psm 7 = “single text line”, good for labels
+    text = pytesseract.image_to_string(
+        img,
+        config="--psm 7 --oem 3 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    ).strip()
 
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-
-        if w < 30 or h < 10:
-            continue
-
-        text_region = processed_image[y : y + h, x : x + w]
-
-        # Apply OCR (Tesseract)
-        text = pytesseract.image_to_string(text_region, config="--psm 6").strip()
-
-        if text:  # Ignore empty results
-            extracted_texts.append(text)
-
-    return "".join(extracted_texts)
-
+    return text
 # Example usage
 # image_path = "./images/hi.txt"
 # detected_text = extract_text_from_label(image_path)
