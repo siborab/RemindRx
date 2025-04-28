@@ -41,11 +41,6 @@ export default function CameraPost() {
                     <CameraCapture onCapture={handleCapture} />
                 )}
             </div>
-            <img
-                src={image || "/placeholder.svg"}
-                alt="Captured"
-                className="w-full h-full object-cover"
-            />
         </DialogContent>
     </Dialog>
   );
