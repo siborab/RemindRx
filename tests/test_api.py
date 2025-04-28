@@ -21,6 +21,6 @@ def test_scan_valid_image(client):
     
     assert response.status_code == 200
     json_data = response.get_json()
-    assert 'text' in json_data
-    assert isinstance(json_data['text'], str)
+    assert 'times' in json_data
+    assert isinstance(json_data['times'], list)
 
