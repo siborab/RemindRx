@@ -2,8 +2,9 @@ import os
 from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 from scanner.model import extract_text_from_label
+from .utils import upload, get_db
 import tempfile
-
+from recommend.recommend2db import recommend2db
 
 models_api = Blueprint("models_api", "models_api", url_prefix="/api/models")
 
@@ -27,9 +28,9 @@ def scan():
     
     try:
         extracted_text = extract_text_from_label(image)
-        
-        return jsonify({"text": extracted_text})
-
+        times = recommend2db(extracted_text)
+        return jsonify({"times": times})
+    
     except FileNotFoundError as e:
        return jsonify({"error": str(e)}), 500 
    
@@ -37,4 +38,10 @@ def scan():
        return jsonify({"error": str(e)}), 500 
     
     except Exception as e:
-       return jsonify({"error": f"Unexpected error: {str(e)}"}), 500 
+       return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+@models_api.route("/test", methods=["POST"])
+def test():
+    db = get_db()
+    upload(db, 6, "description", "skibidi toilet")
+    return jsonify({"gg": "you won"})
