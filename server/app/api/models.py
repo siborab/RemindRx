@@ -14,12 +14,9 @@ CORS(models_api)
 def index():
     return jsonify("Models API is working!")
 
+# TODO: Modify this function to save data to database with user_id. Return the recommended times.
 @models_api.route("/scan", methods=["POST"])
 def scan():
-    
-    if request.method == "GET":
-        return jsonify({"error": "Wrong method used"})
-    
     if "image" not in request.files:
         return jsonify({"error": "No image part in request"}), 400
     
@@ -29,13 +26,7 @@ def scan():
         return jsonify({"error": "No file was selected"}), 400
     
     try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_file:
-            image.save(tmp_file.name)
-            tmp_file_path = tmp_file.name
-            
-        extracted_text = extract_text_from_label(tmp_file_path)
-        
-        os.remove(tmp_file_path)
+        extracted_text = extract_text_from_label(image)
         
         return jsonify({"text": extracted_text})
 
