@@ -24,7 +24,7 @@ jobs:
 
       - name: Build application zip
         run: |
-          zip -r "remindrx_deploy-${{ github.sha }}.zip" ./server ./scanner ./recommend
+          zip -r "remindrx_deploy-${{ github.sha }}.zip" ./server ./scanner ./recommend ./.ebextensions
 
       - name: Upload application artifact
         uses: actions/upload-artifact@v4
