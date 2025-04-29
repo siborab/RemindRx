@@ -11,7 +11,7 @@ def create_high_quality_test_image(text=None, color=(255,255,255)) -> io.BytesIO
         # Use a real font
         font_path = os.path.join(os.path.dirname(__file__), "assets", "DejaVuSans-Bold.ttf")
         font = ImageFont.truetype(font_path, size=48)  # Large font size
-    except IOError:
+    except IOError as e:
         print("Failed to load font:", e)
         font = ImageFont.load_default()
 
