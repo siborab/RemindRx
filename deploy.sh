@@ -8,7 +8,7 @@ zip -r "$ZIP_FILE" \
   ./server \
   ./scanner \
   ./recommend \
-  ./requirements.txt \ggVG"*y
+  ./requirements.txt \
   ./.ebextensions \
 
 # Upload the artifact to S3
