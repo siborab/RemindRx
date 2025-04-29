@@ -23,13 +23,13 @@ jobs:
     
     steps:
       # Clone the repository.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
         with:
           # This is required or we end up in detached head state & thus cannot push any changes.
           ref: ${{ github.head_ref }}
       # Download & set up the terraform CLI.
       - name: Set up terraform CLI
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v1
       
       - run: terraform fmt -check
         working-directory: ./terraform
@@ -56,10 +56,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.TERRAFORM_AWS_SECRET_ACCESS_KEY }}
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       # Download & set up the terraform CLI.
       - name: Set up terraform CLI
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v1
       # Initialize terraform.
       - name: terraform init
         working-directory: ./terraform
