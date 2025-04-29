@@ -1,4 +1,5 @@
 import io
+import os
 from PIL import Image, ImageDraw, ImageFont
 
 def create_high_quality_test_image(text=None, color=(255,255,255)) -> io.BytesIO:
