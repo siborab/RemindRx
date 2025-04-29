@@ -26,7 +26,7 @@ jobs:
           zip -r "remindrx_deploy-${{ github.sha }}.zip" ./server ./scanner ./recommend
 
       - name: Upload application artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: remindrx_application_artifact
           path: remindrx_deploy-${{ github.sha }}.zip
