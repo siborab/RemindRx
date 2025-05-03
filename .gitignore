@@ -36,6 +36,7 @@ terraform.rc
 # Ignore local environment files
 .env
 .venv
+.vscode
 
 flake_old.nix
 test_e2e.py

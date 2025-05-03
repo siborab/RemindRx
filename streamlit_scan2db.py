@@ -14,19 +14,11 @@ uploaded_file = st.file_uploader("Upload an image of the prescription label", ty
 
 
 if uploaded_file is not None:
-    temp_file_path = os.path.join("temp", uploaded_file.name)
-    with open(temp_file_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
     try:
-        recommended_times = scan_and_recommend(temp_file_path)
+        recommended_times = scan_and_recommend(uploaded_file)
         st.success("Recommended Times:")
         st.write(recommended_times)
     except Exception as e:
         st.error(f"An error occurred: {e}")
-    finally:
-        #clean up the temporary file
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
 else:
     st.info("Please upload an image to proceed.")

@@ -6,9 +6,9 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }: 
+  outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
-      let 
+      let
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
@@ -20,19 +20,6 @@
 
         pythonPackages = pkgs.python.pkgs;
 
-        # my-python-env = pkgs.python.withPackages (ps: with ps; [
-        #   numpy
-        #   opencv4
-        #   pillow
-        #   pytesseract
-        #   scikit-learn
-        #   pytest
-        #   pytest-cov
-        #   pandas
-        #   scikit-learn
-	      #   pip
-        # ]);
-
       in {
         devShells = {
           default = pkgs.mkShell {
@@ -43,7 +30,9 @@
               pkgs.stdenv.cc.cc.lib
               pkgs.libGL
               pkgs.glib
+              pkgs.glibc
               pkgs.git
+              pkgs.nixfmt
             ];
 
             shellHook = ''
@@ -64,16 +53,10 @@
               fi
 
               echo "✅ Virtual environment ready!"
-              export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH
-              pip install --user supabase 
+              # export LD_LIBRARY_PATH=${pkgs.glib.out}/lib:${pkgs.libGL}/lib:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.glibc}/lib:$LD_LIBRARY_PATH
             '';
 
           };
         };
-
-        packages = {
-          # default = my-python-env;
-        };
-      }
-    );
+      });
 }
