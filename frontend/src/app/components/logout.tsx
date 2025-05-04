@@ -6,27 +6,23 @@ import { toast } from "sonner";
 import { useAuth } from "../providers/authprovider";
 
 export function Logout() {
-    // global state to keep track of user instance and its data from the table
     const setAtom = useSetAtom(userAtom);
     const router = useRouter();
-    const { refreshAuthState } = useAuth();
-
 
     async function handleClick() {
         toast.info("Logout button clicked");
 
         try {
             const { error } = await supabase.auth.signOut();
-
             if (error) {
                 console.error('Sign out error:', error);
                 toast.error('Sign out error: ' + error.message);
                 return;
             }
 
-            setAtom(null);
+            console.log("Before logging out");
 
-            await refreshAuthState();
+            setAtom(null);
             toast.success('Logged out successfully');
 
             router.push('/signin');

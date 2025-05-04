@@ -12,4 +12,5 @@ export interface Prescription {
     last_sent_time?: string | null,
     created_at?: string | null,
     updated_at?: string | null,
+    recommended_times?: Array<string> | null,
 }
