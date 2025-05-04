@@ -1,4 +1,4 @@
-import { UserInfo } from '@/types/UserData'
+import { User } from '../types/UserData';
 import { atom } from 'jotai';
 
-export const userAtom = atom<UserInfo>();
+export const userAtom = atom<User | null>(null);
