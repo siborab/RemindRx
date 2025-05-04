@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Or macos-latest for macOS
+    runs-on: ubuntu-latest # Or macos-latest for macOS
     environment: development
 
     steps:
@@ -17,14 +17,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download nix 
+      - name: Download nix
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Install Tesseract OCR
         run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
-        
+
       #debug to check python packages
       - name: Check Python packages
         run: pip list
@@ -40,14 +40,14 @@ jobs:
       #   env:
       #     SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
       #     SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
-      
+
       - name: Install dependencies and run tests
         run: |
           nix develop --command sh -c "
             python -m venv .venv
             source .venv/bin/activate
             pip install -r requirements.txt
-            pytest tests
+            pytest --cov=tests --cov-report=term --cov-report=html:ocr_coverage
           "
         env:
           SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
@@ -59,4 +59,9 @@ jobs:
       #     SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
       #     SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}" #env vars for supabase
 
+      - name: Upload Coverage Report As Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ocr_coverage_report
+          path: tests/ocr_coverage
 # --command sh -c "pip install -r requirements.txt && pip list && pytest tests"
