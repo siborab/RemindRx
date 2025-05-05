@@ -110,8 +110,10 @@ def get_morning_medications(db: Client, patient_id: int):
             "refills": prescription.get("refills") or 0,
             "frequency": prescription.get("frequency") or "N/A",
         })
-
-    return results
+    if results:
+        return results
+    else:
+        raise ValueError(f"No morning medications found for patient_id {patient_id}")
 
 
 
@@ -145,8 +147,9 @@ def get_afternoon_medications(db: Client, patient_id: int):
             "refills": prescription.get("refills") or 0,
             "frequency": prescription.get("frequency") or "N/A",
         })
-
-    return results
+    if results:
+        return results
+    raise ValueError(f"No afternoon medications found for patient_id {patient_id}") #only raised if patient has nothing
 
 
 def get_evening_medications(db: Client, patient_id: int):
@@ -180,4 +183,6 @@ def get_evening_medications(db: Client, patient_id: int):
             "frequency": prescription.get("frequency") or "N/A",
         })
 
-    return results
+    if results:
+        return results
+    raise ValueError(f"No evening medications found for patient_id {patient_id}")
