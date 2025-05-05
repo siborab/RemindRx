@@ -1,4 +1,3 @@
-import psycopg2
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
@@ -7,72 +6,85 @@ import time
 import logging
 from dotenv import load_dotenv
 import os
+from supabase import create_client, Client
 
 load_dotenv()
 
-# Database connection details
-DB_NAME = os.getenv("DB_NAME")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+# hide supabase internal HTTP logs from being shown in output
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-# Email credentials
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
-# Set up logging
 LOG_PATH = os.path.join(os.path.dirname(__file__), 'medication_reminder.log')
 logging.basicConfig(filename=LOG_PATH, level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 def get_due_medications():
-    """Fetch users who need to take their medication now and haven't received a reminder yet."""
-    conn = psycopg2.connect(
-        dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
-    )
-    cursor = conn.cursor()
+    """Fetch prescriptions that are due for a reminder email."""
+    now = datetime.now(pytz.utc).isoformat()
 
-    # Get current time in UTC
-    now = datetime.now(pytz.utc)
+    try:
+        response = supabase.table("prescriptions").select(
+            "id, medication, amount, description, next_scheduled_time, last_sent_time, users (id, email, first_name)"
+        ).lte("next_scheduled_time", now).execute()
+    except Exception as e:
+        logging.error(f"Error fetching prescriptions: {e}")
+        return []
 
-    query = """
-    SELECT u.email, u.first_name, p.medication, p.amount, p.description, p.id
-    FROM prescriptions p
-    JOIN users u ON p.patient = u.id
-    WHERE p.next_scheduled_time <= %s
-    AND (p.last_sent_time IS NULL OR p.last_sent_time < p.next_scheduled_time)
-    AND u.email IS NOT NULL;
-    """
-    
-    cursor.execute(query, (now,))
-    results = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
-    return results
+    prescriptions = response.data or []
 
+    due_list = []
+    for p in prescriptions:
+        user = p.get("users") 
+        if not user:
+            continue
+        email = user.get("email")
+        first_name = user.get("first_name")
+        if email is None:
+            continue
+        last_sent_time = p.get("last_sent_time")
+        next_scheduled_time = p.get("next_scheduled_time")
+
+        if last_sent_time is None or last_sent_time < next_scheduled_time:
+            due_list.append({
+                "email": email,
+                "first_name": first_name,
+                "medication": p.get("medication"),
+                "amount": p.get("amount"),
+                "description": p.get("description"),
+                "id": p.get("id"),
+            })
+
+    return due_list
+
+ #Update the prescription's last_sent_time to now
 def mark_email_sent(prescription_id):
-    """Mark that an email has been sent for this prescription."""
-    conn = psycopg2.connect(
-        dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
-    )
-    cursor = conn.cursor()
-    query = "UPDATE prescriptions SET last_sent_time = %s WHERE id = %s"
-    cursor.execute(query, (datetime.now(pytz.utc), prescription_id))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    now = datetime.now(pytz.utc).isoformat()
+
+    try:
+        update_response = supabase.table("prescriptions").update({
+            "last_sent_time": now
+        }).eq("id", prescription_id).execute()
+    except Exception as e:
+        logging.error(f"Error updating last_sent_time for prescription ID {prescription_id}: {e}")
+        return
+
     logging.info(f"Updated last_sent_time for prescription ID {prescription_id}.")
 
+# send email reminder for due medication
 def send_email(to_email, first_name, medication, amount, description, prescription_id):
-    """Send email reminder."""
     subject = f"Time for your {medication} medication"
-    body = f"Hi {first_name},\n\nIt's time to take your {medication} medication. Take {amount} pills."
-    
-    # Add the description only if it's not null or empty
+    body = f"Hi {first_name},\n\nIt's time to take your {medication} medication. Take {amount} pill(s)."
+
     if description:
         body += f"\n\nMedication Description: {description}"
 
@@ -89,22 +101,27 @@ def send_email(to_email, first_name, medication, amount, description, prescripti
         server.quit()
         logging.info(f"Email sent to {to_email} for medication {medication}.")
 
-        # Update last_sent_time after successful email send
+        # Mark as sent in db
         mark_email_sent(prescription_id)
     except Exception as e:
         logging.error(f"Error sending email to {to_email}: {e}")
 
+# check for due perscription and send reminders every 60s
 def main():
-    """Main function to check and send medication reminders."""
     while True:
         due_medications = get_due_medications()
         if due_medications:
-            for email, first_name, medication, amount, description, prescription_id in due_medications:
-                send_email(email, first_name, medication, amount, description, prescription_id)
+            for item in due_medications:
+                send_email(
+                    item['email'],
+                    item['first_name'],
+                    item['medication'],
+                    item['amount'],
+                    item.get('description'),
+                    item['id']
+                )
         else:
             logging.info("No medications are due at this time.")
-        
-        # Sleep for 60 seconds before checking again
         time.sleep(60)
 
 if __name__ == "__main__":
