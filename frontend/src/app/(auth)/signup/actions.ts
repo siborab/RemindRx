@@ -2,7 +2,6 @@
 
 import { SignupFormSchema } from "@/lib/formSchemas";
 import { redirect } from 'next/navigation';
-import { userService } from "@/utils/services/userService";
 import { createClient } from "@/utils/supabase/server";
 
 export async function signup(state: any, formData: FormData) {

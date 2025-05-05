@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/app/providers/authprovider"
-import { useRouter } from "next/navigation"
 import HomePage from "../(private)/home/page"
 
 

@@ -3,7 +3,6 @@ import { userAtom } from "@/lib/atoms";
 import { useRouter } from 'next/navigation';
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { useAuth } from "../providers/authprovider";
 
 export function Logout() {
     const setAtom = useSetAtom(userAtom);
