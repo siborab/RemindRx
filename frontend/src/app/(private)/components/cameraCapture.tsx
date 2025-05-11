@@ -30,6 +30,7 @@ const CameraCapture = ({ onCapture, prescriptionData, reset }: CameraProps) => {
       setStream(stream);
       setCameraActive(true);
     } catch (error) {
+      toast.error("Error accessing camera");
       console.error("Error accessing camera:", error);
     }
   };
@@ -94,7 +95,11 @@ const CameraCapture = ({ onCapture, prescriptionData, reset }: CameraProps) => {
       }
 
       const data = await res.json();
-      toast.success(`Medication ${prescriptionData.name} added successfully!`);
+      if (data.times && data.times.length > 0) {
+        toast.success(`Medication ${prescriptionData.name} added successfully! Recommended times: ${data.times.join(", ")}`);
+      } else {
+        toast.success(`Medication ${prescriptionData.name} added successfully!`);
+      }
       console.log(data);
     } catch (err) {
       console.error("Error scanning image:", err);

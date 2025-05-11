@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from recommend.recommendation import predict_times
 
-def recommend2db(text: str):
+def recommend2db(text: str, name: str, refill_time: str, refills: str, amount: str):
     load_dotenv(dotenv_path='.env', override=True)   #pathing for my env in root
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_KEY")
@@ -24,8 +24,13 @@ def recommend2db(text: str):
     
     insert_response = supabase.table("prescriptions").insert({
         "patient_id": 6,  #set to patient 6 just for demo purposes
-        "description": text
+        "description": text,
+        "medication": name,
+        "amount": amount,
+        "refill_time": refill_time,
+        "refills": refills
     }).execute()
+
 
     prescription_id = insert_response.data[0]['id'] #supabase assigns an id to the prescription when it is inserted, we wanna grab that for later
 
