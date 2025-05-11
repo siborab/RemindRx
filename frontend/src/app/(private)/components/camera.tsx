@@ -56,7 +56,7 @@ export default function CameraPost() {
         <DialogTrigger className="bg-purple-500 text-white px-4 py-2 rounded-2xl hover:bg-purple-400">Add Medication</DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>New Medication</DialogTitle>
+            <DialogTitle></DialogTitle>
           </DialogHeader>
           <div className="">
             {!showCamera ? (

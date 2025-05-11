@@ -31,9 +31,14 @@ const PrescriptionForm = ({ onSubmit }: PrescriptionFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-purple-50 p-4 rounded-lg mb-6 text-center">
+        <h3 className="text-lg font-medium text-purple-800">Add New Medication</h3>
+        <p className="text-sm text-purple-600">Enter the details of your prescription</p>
+      </div>
+      
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Prescription Name
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          Medication Name
         </label>
         <input
           type="text"
@@ -42,28 +47,28 @@ const PrescriptionForm = ({ onSubmit }: PrescriptionFormProps) => {
           required
           value={formData.name}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          placeholder="Enter medication name"
+          className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
         />
       </div>
 
       <div>
-        <label htmlFor="refillTime" className="block text-sm font-medium text-gray-700">
-          Refill Time
+        <label htmlFor="refillTime" className="block text-sm font-medium text-gray-700 mb-1">
+          Next Refill Date
         </label>
         <input
-          type="text"
+          type="date"
           id="refillTime"
           name="refillTime"
           required
           value={formData.refillTime}
           onChange={handleChange}
-          placeholder="e.g., 30 days"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
         />
       </div>
 
       <div>
-        <label htmlFor="refills" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="refills" className="block text-sm font-medium text-gray-700 mb-1">
           Number of Refills
         </label>
         <input
@@ -74,12 +79,13 @@ const PrescriptionForm = ({ onSubmit }: PrescriptionFormProps) => {
           min="0"
           value={formData.refills}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          placeholder="0"
+          className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
         />
       </div>
 
       <div>
-        <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
           Amount
         </label>
         <input
@@ -89,17 +95,17 @@ const PrescriptionForm = ({ onSubmit }: PrescriptionFormProps) => {
           required
           value={formData.amount}
           onChange={handleChange}
-          placeholder="in mg"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          placeholder="amount should be in mg"
+          className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
         />
       </div>
 
-      <div className="pt-2">
+      <div className="pt-4">
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
         >
-          Next
+          Continue to Camera
         </button>
       </div>
     </form>

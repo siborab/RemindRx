@@ -123,61 +123,87 @@ const CameraCapture = ({ onCapture, prescriptionData, reset }: CameraProps) => {
 
   return (
     <div className="flex flex-col items-center">
+      <div className="mb-4 text-center">
+        <h3 className="text-lg font-medium">Add photo of {prescriptionData.name}</h3>
+        <p className="text-sm text-gray-500">Take a clear picture of your prescription label</p>
+      </div>
 
       {!capturedImage ? (
         <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-64 h-48 border rounded"
-          />
-          {!cameraActive ? (
-            <button
-              className="bg-green-500 text-white px-4 py-2 mt-2 rounded"
-              onClick={startCamera}
-            >
-              Start Camera
-            </button>
-          ) : (
-            <button
-              className="bg-blue-500 text-white px-4 py-2 mt-2 rounded"
-              onClick={captureImage}
-            >
-              Capture
-            </button>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="bg-gray-100 px-2 py-2 rounded"
-          />
+          <div className="overflow-hidden rounded-lg shadow-md bg-gray-50 p-2 w-72">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full h-56 rounded object-cover border border-gray-200"
+            />
+            
+            <div className="mt-3 flex flex-col gap-2">
+              {!cameraActive ? (
+                <button
+                  className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
+                  onClick={startCamera}
+                >
+                  Start Camera
+                </button>
+              ) : (
+                <button
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  onClick={captureImage}
+                >
+                  Capture Photo
+                </button>
+              )}
+              
+              <div className="relative w-full mt-2">
+                <label className="w-full cursor-pointer flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-700">Upload Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="sr-only"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
         </>
       ) : (
         <>
-          <img
-            src={capturedImage}
-            alt="Captured"
-            className="w-64 h-48 border rounded"
-          />
-          <div className="flex space-x-2 mt-2">
-            <button
-              className="bg-yellow-500 text-white px-4 py-2 rounded"
-              onClick={() => {
-                setCapturedImage(null);
-                setFile(null);
-              }}
-            >
-              Retake
-            </button>
-            <button
-              className="bg-blue-400 text-white px-4 py-2 rounded"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? "Analyzing..." : "Next"}
-            </button>
+          <div className="overflow-hidden rounded-lg shadow-md bg-gray-50 p-2 w-72">
+            <img
+              src={capturedImage}
+              alt="Captured"
+              className="w-full h-56 rounded object-cover border border-gray-200"
+            />
+            
+            <div className="mt-3 flex gap-2">
+              <button
+                className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors"
+                onClick={() => {
+                  setCapturedImage(null);
+                  setFile(null);
+                }}
+              >
+                Retake
+              </button>
+              <button
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing
+                  </span>
+                ) : "Submit"}
+              </button>
+            </div>
           </div>
         </>
       )}
