@@ -7,32 +7,20 @@ import TimeOfDay from '../components/timeOfDay'
 import { RecommendedTimePrescription } from "@/types/PrecriptionData";
 import { useEffect, useState } from "react";
 import CameraPost from "../components/camera";
+import getPrescriptions from "./actions";
 
 export default function HomePage() {
   const userInfo = useAtomValue(userAtom);
   const [prescriptions, setPrescriptions] = useState<RecommendedTimePrescription[]>([])
-  const [loading, setLoading] = useState(true)
-
 
   useEffect(() => {
     async function getPrescriptionData() {
-        setLoading(true);
-
-      const { data, error } = await supabase
-                              .from('recommended_times')
-                              .select(`
-                                recommended_time,
-                                isTaken,
-                                prescription:prescriptions(*)
-                              `)
-                              .eq('patient_id', 6);
-      console.log(data);
-
-      if (error) {
-        console.error("Error fetching prescriptions:", error);
+      const data = await getPrescriptions(6)
+      if (data.error) {
+        console.error("Error fetching prescriptions:", data.error);
         toast.error("Failed to load prescriptions");
       } else {
-        setPrescriptions(data);
+        setPrescriptions(data?.data!);
       }
     }
 
@@ -40,7 +28,7 @@ export default function HomePage() {
       getPrescriptionData();
     }
 
-  }, []);
+  }, [userInfo]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
