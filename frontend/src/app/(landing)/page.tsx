@@ -12,7 +12,7 @@ export default function Landing() {
           <div className="flex flex-col items-center justify-center space-y-8 text-center">
             <div className="space-y-4 max-w-3xl mx-auto">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
-                Never Miss a Medication Again
+                Never Miss a Medication
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
                 Stay on top of your health with RemindRx. We make managing your medications simple, 
@@ -71,8 +71,7 @@ export default function Landing() {
                 Why Choose RemindRx?
               </h2>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-lg">
-                Designed with input from healthcare professionals and built with advanced technology 
-                to ensure you stay healthy and on track.
+                Built with advanced technology to ensure you stay healthy and on track.
               </p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto w-full justify-center">
@@ -82,7 +81,7 @@ export default function Landing() {
               </div>
               <div className="flex items-center space-x-4 justify-center">
                 <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0" />
-                <span>Privacy focused</span>
+                <span>Track all medication</span>
               </div>
               <div className="flex items-center space-x-4 justify-center">
                 <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0" />
@@ -97,10 +96,10 @@ export default function Landing() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-6 text-center text-white max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-              Ready to Take Control of Your Health?
+              Ready to Never Miss a Medication Ever Again?
             </h2>
             <p className="mx-auto max-w-[600px] text-purple-100 md:text-lg">
-              Join thousands of users who trust RemindRx to manage their medications effectively.
+              Join other users who trust RemindRx to manage their medications effectively.
             </p>
             <Link href="/signup">
               <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50">

@@ -21,5 +21,12 @@ export interface RecommendedTimePrescription {
     isTaken: boolean
 }
 
+export interface PrescriptionFormData {
+    name: string;
+    refillTime: string;
+    refills: string;
+    amount: string;
+  }
+
 export type PrescriptionList = Array<Partial<Prescription>>;
 export type PrescriptionFilter = Partial<Prescription>;

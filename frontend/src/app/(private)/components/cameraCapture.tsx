@@ -2,13 +2,15 @@
 
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { PrescriptionFormData } from "@/types/PrecriptionData";
 
-interface ScanResult {
-  times: string[];
+interface CameraProps {
+  onCapture: (image: File) => void;
+  prescriptionData: PrescriptionFormData;
+  reset: () => void;
 }
 
-
-const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
+const CameraCapture = ({ onCapture, prescriptionData, reset }: CameraProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -70,7 +72,7 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
   };
 
 
-  const handleNext = async () => {
+  const handleSubmit = async () => {
     if (!file) return;
     setLoading(true);
     onCapture(file);
@@ -78,6 +80,10 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
     try {
       const formData = new FormData();
       formData.append("image", file);
+      formData.append("name", prescriptionData.name);
+      formData.append("refillTime", prescriptionData.refillTime);
+      formData.append("refills", prescriptionData.refills);
+      formData.append("amount", prescriptionData.amount);
 
       const res = await fetch("http://127.0.0.1:8080/api/models/scan", {
         method: "POST",
@@ -88,14 +94,17 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
       }
 
       const data = await res.json();
-      toast.success(data.times);
+      toast.success(`Medication ${prescriptionData.name} added successfully!`);
       console.log(data);
     } catch (err) {
       console.error("Error scanning image:", err);
+      toast.error("Failed to add medication. Please try again.");
     } finally {
       setLoading(false);
+      reset();
     }
   };
+
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -159,7 +168,7 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
             </button>
             <button
               className="bg-blue-400 text-white px-4 py-2 rounded"
-              onClick={handleNext}
+              onClick={handleSubmit}
               disabled={loading}
             >
               {loading ? "Analyzing..." : "Next"}

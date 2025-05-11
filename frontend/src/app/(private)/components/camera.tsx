@@ -11,25 +11,44 @@ import {
   
 import { useState } from "react";
 import CameraCapture from "./cameraCapture";
+import PrescriptionForm from "./prescriptionForm";
+import { PrescriptionFormData } from "@/types/PrecriptionData";
 
-interface ApiData {
-  title: string;
-  description: string;
-  category: string;
-  tags: string;
-  severity: string;
-}
 
 export default function CameraPost() {
   const [image, setImage] = useState<File | null>(null);
-  const [apiData, setApiData] = useState<ApiData | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  
+  const [prescriptionData, setPrescriptionData] = useState<PrescriptionFormData>({
+    name: "",
+    refillTime: "",
+    refills: "",
+    amount: ""
+  });
 
   const handleCapture = (capturedImage: File) => {
     setImage(capturedImage);
   };
 
-  const handleApiResponse = (data: ApiData) => {
-    setApiData(data);
+  const handleFormSubmit = (formData: {
+    name: string;
+    refillTime: string;
+    refills: string;
+    amount: string;
+  }) => {
+    setPrescriptionData(formData);
+    setShowCamera(true);
+  };
+
+  const handleReset = () => {
+    setImage(null);
+    setShowCamera(false);
+    setPrescriptionData({
+      name: "",
+      refillTime: "",
+      refills: "",
+      amount: ""
+    });
   };
 
   return (
@@ -40,9 +59,17 @@ export default function CameraPost() {
             <DialogTitle>New Medication</DialogTitle>
           </DialogHeader>
           <div className="">
-              {!image && (
-                  <CameraCapture onCapture={handleCapture} />
-              )}
+            {!showCamera ? (
+              <PrescriptionForm onSubmit={handleFormSubmit} />
+            ) : (
+              !image && (
+                <CameraCapture 
+                  onCapture={handleCapture} 
+                  prescriptionData={prescriptionData}
+                  reset={handleReset}
+                />
+              )
+            )}
           </div>
         </DialogContent>
     </Dialog>
