@@ -16,6 +16,7 @@ export interface Prescription {
 
 export interface RecommendedTimePrescription {
     recommended_time: string,
+    id: number,
     prescription: Prescription,
     isTaken: boolean
 }

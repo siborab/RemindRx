@@ -45,7 +45,13 @@ export default function TimeOfDay({prescriptions, timeOfDay}: Props) {
     const filteredPrescriptions = filterPrescriptions(prescriptions, timeOfDay);
 
     const pillCards = filteredPrescriptions.map((prescription, index) => {
-        return (<PillCard key={index} recommended_time={prescription.recommended_time} prescription={prescription.prescription}></PillCard>)
+        return (<PillCard
+                    key={index} 
+                    recommended_time={prescription.recommended_time} 
+                    prescription={prescription.prescription} 
+                    id={prescription.id}
+                    isTaken={prescription.isTaken}
+                />)
     })
 
     return (

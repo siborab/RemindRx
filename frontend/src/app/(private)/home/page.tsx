@@ -7,7 +7,7 @@ import TimeOfDay from '../components/timeOfDay'
 import { RecommendedTimePrescription } from "@/types/PrecriptionData";
 import { useEffect, useState } from "react";
 import CameraPost from "../components/camera";
-import getPrescriptions from "./actions";
+import {getPrescriptions} from "./actions";
 
 export default function HomePage() {
   const userInfo = useAtomValue(userAtom);
