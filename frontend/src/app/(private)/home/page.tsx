@@ -5,9 +5,7 @@ import { userAtom } from "@/lib/atoms"
 import { toast } from "sonner";
 import TimeOfDay from '../components/timeOfDay'
 import { RecommendedTimePrescription } from "@/types/PrecriptionData";
-import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
-import Loading from "@/app/components/loading";
 import CameraPost from "../components/camera";
 
 export default function HomePage() {
@@ -25,19 +23,16 @@ export default function HomePage() {
                               .select(`
                                 recommended_time,
                                 isTaken,
-                                prescription:prescriptions(*) (
-                                  *
-                                )
+                                prescription:prescriptions(*)
                               `)
-                              .eq('patient_id', 6)
-                              .returns<RecommendedTimePrescription[]>();
+                              .eq('patient_id', 6);
       console.log(data);
-  
+
       if (error) {
         console.error("Error fetching prescriptions:", error);
         toast.error("Failed to load prescriptions");
       } else {
-        setPrescriptions(data!);
+        setPrescriptions(data);
       }
     }
 
@@ -46,11 +41,6 @@ export default function HomePage() {
     }
 
   }, []);
-
-  if (loading) {
-    return (<Loading />);
-  }
-
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
