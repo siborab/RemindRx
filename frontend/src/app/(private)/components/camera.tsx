@@ -34,13 +34,16 @@ export default function CameraPost() {
 
   return (
     <Dialog>
-        <DialogTrigger>Add Medication</DialogTrigger>
-        <DialogContent>
-            <div className="">
-                {!image && (
-                    <CameraCapture onCapture={handleCapture} />
-                )}
-            </div>
+        <DialogTrigger className="bg-purple-500 text-white px-4 py-2 rounded-2xl hover:bg-purple-400">Add Medication</DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>New Medication</DialogTitle>
+          </DialogHeader>
+          <div className="">
+              {!image && (
+                  <CameraCapture onCapture={handleCapture} />
+              )}
+          </div>
         </DialogContent>
     </Dialog>
   );

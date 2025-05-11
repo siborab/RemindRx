@@ -73,6 +73,7 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
   const handleNext = async () => {
     if (!file) return;
     setLoading(true);
+    onCapture(file);
 
     try {
       const formData = new FormData();
@@ -96,9 +97,18 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    setCapturedImage(url);
+    setFile(f);
+    stopCamera();
+  };
+
+
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-xl font-semibold mb-4">Take a Picture</h2>
 
       {!capturedImage ? (
         <>
@@ -123,6 +133,12 @@ const CameraCapture = ({ onCapture }: { onCapture: (image: File) => void }) => {
               Capture
             </button>
           )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="bg-gray-100 px-2 py-2 rounded"
+          />
         </>
       ) : (
         <>
