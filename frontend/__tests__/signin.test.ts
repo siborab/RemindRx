@@ -1,6 +1,5 @@
 import { signin } from '@/app/(auth)/signin/actions'; 
 import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
 
 jest.mock('@/utils/supabase/server', () => ({
   createClient: jest.fn(),

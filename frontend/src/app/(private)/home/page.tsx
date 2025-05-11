@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import Loading from "@/app/components/loading";
 import CameraPost from "../components/camera";
 
-export default function HomePage () {
+export default function HomePage() {
   const userInfo = useAtomValue(userAtom);
   const [prescriptions, setPrescriptions] = useState<RecommendedTimePrescription[]>([])
   const [loading, setLoading] = useState(true)
@@ -18,7 +18,7 @@ export default function HomePage () {
 
   useEffect(() => {
     async function getPrescriptionData() {
-      setLoading(true);
+        setLoading(true);
 
       const { data, error } = await supabase
                               .from('recommended_times')
@@ -39,20 +39,18 @@ export default function HomePage () {
       } else {
         setPrescriptions(data!);
       }
-  
-      setLoading(false);
     }
-  
+
     if (userInfo) {
       getPrescriptionData();
     }
-  
-  }, [])
+
+  }, []);
 
   if (loading) {
-    return (<Loading/>);
+    return (<Loading />);
   }
-  
+
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">

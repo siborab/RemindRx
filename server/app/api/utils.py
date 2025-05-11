@@ -58,3 +58,131 @@ def upload(db: Client, patient_id, prescription_data: PrescriptionData):
         return True
     else:
         return False
+    
+# takes the patient_id, and text
+def get_email(db: Client, patient_id: int) -> str:
+    """Return the user's email by their id (a.k.a patient_id)."""
+    response = (
+        db.table("users")
+          .select("email")
+          .eq("id", patient_id)       
+          .maybe_single()
+          .execute()
+    )
+
+    if response.data and response.data.get("email"):
+        return response.data["email"]
+
+    raise ValueError(f"No email found for patient_id {patient_id}")
+    
+
+
+#the below are helper functions to get the medications for a given time of day for a given patient_id 
+def get_morning_medications(db: Client, patient_id: int):
+    response = (
+        db.table("recommended_times")
+        .select("recommended_time, prescription_id, prescriptions(medication, description, amount, refills, frequency)")
+        .eq("patient_id", patient_id)
+        .execute()
+    ) #basic query to get the recommended times for a given patient_id
+
+    results = [] #list to hold the results
+    for row in response.data:  #the response containts every recommended time for the given patient_id, now we need to filter 
+        time_str = row.get("recommended_time", "")  #for each row in the response data, we do a split on the recommended_time to get the hour and minute
+        if not time_str or ":" not in time_str:
+            continue
+        
+        hour, minute = map(int, time_str.split(":")) #note we typecast to string for easier manipulation as opposed to '00' 
+
+        #check if after 00:00 and <= 12:00
+        if hour == 0 and minute == 0:
+            continue  # skip 00:00
+        if hour > 12 or (hour == 12 and minute > 0):
+            continue  # skip anything after 12:00
+
+        prescription = row.get("prescriptions", {}) #now we append this to the results list, and apply default values for missing fields
+        results.append({
+            "name": prescription.get("medication") or "N/A",
+            "time": time_str,
+            "medication": prescription.get("medication") or "N/A",
+            "description": prescription.get("description") or "N/A",
+            "amount": prescription.get("amount") or 0,
+            "refills": prescription.get("refills") or 0,
+            "frequency": prescription.get("frequency") or "N/A",
+        })
+    if results:
+        return results
+    else:
+        raise ValueError(f"No morning medications found for patient_id {patient_id}")
+
+
+
+def get_afternoon_medications(db: Client, patient_id: int):
+    response = (
+        db.table("recommended_times")
+        .select("recommended_time, prescription_id, prescriptions(medication, description, amount, refills, frequency)")
+        .eq("patient_id", patient_id)
+        .execute()
+    ) #basic query to get the recommended times for a given patient_id
+
+    results = [] #list to hold the results
+    for row in response.data:  #the response containts every recommended time for the given patient_id, now we need to filter 
+        time_str = row.get("recommended_time", "")  #for each row in the response data, we do a split on the recommended_time to get the hour and minute
+        if not time_str or ":" not in time_str:
+            continue
+        
+        hour, minute = map(int, time_str.split(":")) #note we typecast to string for easier manipulation as opposed to '00' 
+
+        #check if after 12:00 and <= 15:00
+        if (hour < 12) or (hour == 12 and minute == 0) or (hour > 15) or (hour == 15 and minute > 0):
+            continue  
+
+        prescription = row.get("prescriptions", {}) #now we append this to the results list, and apply default values for missing fields
+        results.append({
+            "name": prescription.get("medication") or "N/A",
+            "time": time_str,
+            "medication": prescription.get("medication") or "N/A",
+            "description": prescription.get("description") or "N/A",
+            "amount": prescription.get("amount") or 0,
+            "refills": prescription.get("refills") or 0,
+            "frequency": prescription.get("frequency") or "N/A",
+        })
+    if results:
+        return results
+    raise ValueError(f"No afternoon medications found for patient_id {patient_id}") #only raised if patient has nothing
+
+
+def get_evening_medications(db: Client, patient_id: int):
+    response = (
+        db.table("recommended_times")
+        .select("recommended_time, prescription_id, prescriptions(medication, description, amount, refills, frequency)")
+        .eq("patient_id", patient_id)
+        .execute()
+    ) #basic query to get the recommended times for a given patient_id
+
+    results = [] #list to hold the results
+    for row in response.data:  #the response containts every recommended time for the given patient_id, now we need to filter 
+        time_str = row.get("recommended_time", "")  #for each row in the response data, we do a split on the recommended_time to get the hour and minute
+        if not time_str or ":" not in time_str:
+            continue
+        
+        hour, minute = map(int, time_str.split(":")) #note we typecast to string for easier manipulation as opposed to '00' 
+
+        #check if after 15:00 and <= 24:00
+        if (hour < 15) or (hour == 15 and minute == 0) or (hour > 24) or (hour == 24 and minute > 0):
+            continue  
+        
+        prescription = row.get("prescriptions", {}) #now we append this to the results list, and apply default values for missing fields
+        results.append({
+            "name": prescription.get("medication") or "N/A",
+            "time": time_str,
+            "medication": prescription.get("medication") or "N/A",
+            "description": prescription.get("description") or "N/A",
+            "amount": prescription.get("amount") or 0,
+            "refills": prescription.get("refills") or 0,
+            "frequency": prescription.get("frequency") or "N/A",
+        })
+
+    if results:
+        return results
+    raise ValueError(f"No evening medications found for patient_id {patient_id}")

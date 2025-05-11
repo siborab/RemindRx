@@ -1,8 +1,3 @@
-export interface UserInfo {
-    'first_name': string
-    'last_name': string
-}
-
 export interface User {
     id?: number;
     first_name?: string | null;
@@ -15,6 +10,3 @@ export interface User {
     email?: string | null;
     auth_id?: string | null;
 }
-
-export type UserList = Array<Partial<User>>;
-export type UserFilter = Partial<User>; 

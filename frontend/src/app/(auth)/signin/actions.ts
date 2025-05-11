@@ -1,7 +1,8 @@
 'use server';
 
 import { LoginFormSchema } from "@/lib/formSchemas";
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from "@/utils/supabase/server";
+
 
 export async function signin(state: any, formData: FormData) {
     const data = {
@@ -19,7 +20,6 @@ export async function signin(state: any, formData: FormData) {
             errors: validatedFields.error.flatten().fieldErrors
         };
     }
-
     const supabase = await createClient();
 
     const { error } = await supabase.auth.signInWithPassword(data);

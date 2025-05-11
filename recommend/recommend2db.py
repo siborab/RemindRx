@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from recommend.recommendation import predict_times
 
 def recommend2db(text: str):
-
     load_dotenv(dotenv_path='.env', override=True)   #pathing for my env in root
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_KEY")
@@ -16,21 +15,32 @@ def recommend2db(text: str):
      
     if not url or not key: #supabase connection check
         raise EnvironmentError("Missing or invalid Supabase URL or key. Please check thee .env file.")
+    supabase= create_client(url, key)
     predicted_times = predict_times(text)
 
     # if model can’t match, quit early
     if "No matching times found" in predicted_times:
         return []
     
-    supabase = create_client(url, key)
-    response= supabase.table("prescriptions").select("recommended_times").execute()
-    #print(response.data)
-    #print("Inserting a new prescription into the database hopefully...")
-    supabase.table("prescriptions").insert({"patient_id": 6,"description": text, "recommended_times": predict_times(text)}).execute() # try text for "Take one tablet twice daily"
-    response = supabase.table("prescriptions").select("recommended_times").order("created_at", desc=True).limit(1).execute() #get latest entry and ensure order by created_at desc
+    insert_response = supabase.table("prescriptions").insert({
+        "patient_id": 6,  #set to patient 6 just for demo purposes
+        "description": text
+    }).execute()
 
-    all_lists = [row["recommended_times"] for row in response.data]
-    return all_lists  # return the latest entry (as a list)
+    prescription_id = insert_response.data[0]['id'] #supabase assigns an id to the prescription when it is inserted, we wanna grab that for later
+
+    #insert each recommended time into recommended_times table
+    inserted_times = []
+    for time in predicted_times:
+        supabase.table("recommended_times").insert({
+            "recommended_time": time,
+            "prescription_id": prescription_id,
+            "patient_id": 6, #again, use patient 6 for demo purposes
+            "isTaken": None  # optional
+        }).execute()
+        inserted_times.append(time)
+
+    return inserted_times
 
 def delete(time):
 

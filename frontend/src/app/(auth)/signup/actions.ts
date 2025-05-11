@@ -1,11 +1,10 @@
 'use server';
 
 import { SignupFormSchema } from "@/lib/formSchemas";
+import { redirect } from 'next/navigation';
+import { createClient } from "@/utils/supabase/server";
 
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-
-export async function signup (state: any, formData: FormData) {
+export async function signup(state: any, formData: FormData) {
 
     const validatedFields = SignupFormSchema.safeParse({
         email: formData.get('email'),
@@ -23,20 +22,20 @@ export async function signup (state: any, formData: FormData) {
 
     const supabase = await createClient();
 
-    const response = await supabase.auth.signUp( {
+    const response = await supabase.auth.signUp({
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     });
 
-    if (response.error) console.error(response.error) 
+    if (response.error) console.error(response.error)
 
     const userId = response.data.user?.id;
 
     const { error } = await supabase.from('users').insert({
-        auth_id: userId, 
+        auth_id: userId,
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),
     });
-    
-    if (error) {console.error(error)} else {redirect('/home')}
+
+    if (error) { console.error(error) } else { redirect('/home') }
 }
