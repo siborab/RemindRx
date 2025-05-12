@@ -3,7 +3,8 @@ from datetime import datetime, timezone
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from dataclasses import dataclass, field, asdict
-
+import smtplib
+from email.mime.text import MIMEText
 
 @dataclass
 class PrescriptionData:
@@ -58,24 +59,6 @@ def upload(db: Client, patient_id, prescription_data: PrescriptionData):
         return True
     else:
         return False
-    
-# takes the patient_id, and text
-def get_email(db: Client, patient_id: int) -> str:
-    """Return the user's email by their id (a.k.a patient_id)."""
-    response = (
-        db.table("users")
-          .select("email")
-          .eq("id", patient_id)       
-          .maybe_single()
-          .execute()
-    )
-
-    if response.data and response.data.get("email"):
-        return response.data["email"]
-
-    raise ValueError(f"No email found for patient_id {patient_id}")
-    
-
 
 #the below are helper functions to get the medications for a given time of day for a given patient_id 
 def get_morning_medications(db: Client, patient_id: int):
@@ -186,3 +169,85 @@ def get_evening_medications(db: Client, patient_id: int):
     if results:
         return results
     raise ValueError(f"No evening medications found for patient_id {patient_id}")
+
+def get_user_info(db: Client, patient_id: int):
+     """return user email and fname"""
+     response = (
+         db.table("users")
+         .select("email, first_name")
+         .eq("id", patient_id)
+         .maybe_single()
+         .execute()
+     )
+
+     if response.data and response.data.get("email") and response.data.get("first_name"):
+         return response.data
+
+     raise ValueError(f"No user info found for patient_id {patient_id}")
+
+def send_summary_email(db: Client, patient_id: int):
+    EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+    SMTP_SERVER = "smtp.gmail.com"
+    SMTP_PORT = 587
+    
+    """Send a summary email of today's medications for a given user."""
+    user_info = get_user_info(db, patient_id)
+    to_email = user_info["email"]
+    first_name = user_info["first_name"]
+
+    try:
+        morning = sorted(
+            [m for m in get_morning_medications(db, patient_id)
+            if m["medication"] and m["medication"] != "N/A" and m["amount"] > 0],
+            key=lambda m: m["time"]
+            )
+    except:
+        morning = []
+
+    try:
+        afternoon = sorted(
+            [m for m in get_afternoon_medications(db, patient_id)
+            if m["medication"] and m["medication"] != "N/A" and m["amount"] > 0],
+            key=lambda m: m["time"]
+            )
+    except:
+        afternoon = []
+
+    try:
+        evening = sorted(
+            [m for m in get_evening_medications(db, patient_id)
+            if m["medication"] and m["medication"] != "N/A" and m["amount"] > 0],
+            key=lambda m: m["time"]
+            )
+    except:
+        evening = []
+
+    def format_section(title, meds):
+        if not meds:
+            return ""
+        return f"{title}:\n" + "\n".join(
+            f"  {m['time']} – {m['medication']} ({m['amount']} pill{'s' if m['amount'] != 1 else ''})"
+            for m in meds
+        ) + "\n\n"
+
+
+    body = f"Hi {first_name},\n\nHere's your medication schedule for today:\n\n"
+    body += format_section("Morning", morning)
+    body += format_section("Afternoon", afternoon)
+    body += format_section("Evening", evening)
+
+    msg = MIMEText(body)
+    msg["Subject"] = "Your Medication Schedule for Today"
+    msg["From"] = EMAIL_ADDRESS
+    msg["To"] = to_email
+
+    try:
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_ADDRESS, to_email, msg.as_string())
+        server.quit()
+        print(f"Summary email sent to {first_name} (ID:{patient_id}) at {to_email}")
+    except Exception as e:
+        print(f"Failed to send summary email: {e}")
