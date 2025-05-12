@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 from scanner.model import extract_text_from_label
-from .utils import upload, get_db, get_email, get_patient, get_morning_medications, get_afternoon_medications , get_evening_medications
+from .utils import upload, get_db, get_patient, get_morning_medications, get_afternoon_medications , get_evening_medications
 import tempfile
 from recommend.recommend2db import recommend2db
 

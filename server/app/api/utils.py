@@ -186,6 +186,7 @@ def get_user_info(db: Client, patient_id: int):
      raise ValueError(f"No user info found for patient_id {patient_id}")
 
 def send_summary_email(db: Client, patient_id: int):
+    load_dotenv(dotenv_path=".env", override=True)  # pathing for my env in root
     EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
     EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
     SMTP_SERVER = "smtp.gmail.com"
