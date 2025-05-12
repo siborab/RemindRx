@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from .api.models import models_api
+from .api.backend import backend_api
 
 def create_app():
 
@@ -11,6 +12,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     app.register_blueprint(models_api)
+    app.register_blueprint(backend_api)
     
     @app.route('/')
     def welcome():
