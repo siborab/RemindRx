@@ -9,14 +9,12 @@ import Loading from "@/app/components/loading";
 
 type AuthContextType = {
   user: User | null;
-  isLoading: boolean;
   isAuthenticated: boolean;
   refreshAuthState: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isLoading: true,
   isAuthenticated: false,
   refreshAuthState: async () => { },
 });
@@ -27,13 +25,13 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  //const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const setUserAtom = useSetAtom(userAtom);
 
   const refreshAuthState = async () => {
     console.log("Refreshing auth state");
-    setIsLoading(true);
+    //setIsLoading(true);
 
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
@@ -57,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setIsAuthenticated(false);
     } finally {
-      setIsLoading(false);
+      //setIsLoading(false);
     }
   };
 
@@ -95,12 +93,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isLoading,
         isAuthenticated,
         refreshAuthState
       }}
     >
-      {isLoading ? <Loading /> : children}
+      {children}
     </AuthContext.Provider>
   );
 }

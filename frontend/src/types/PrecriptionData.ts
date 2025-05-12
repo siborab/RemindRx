@@ -12,5 +12,21 @@ export interface Prescription {
     last_sent_time?: string | null,
     created_at?: string | null,
     updated_at?: string | null,
-    recommended_times?: Array<string> | null,
 }
+
+export interface RecommendedTimePrescription {
+    recommended_time: string,
+    id: number,
+    prescription: Prescription,
+    isTaken: boolean
+}
+
+export interface PrescriptionFormData {
+    name: string;
+    refillTime: string;
+    refills: string;
+    amount: string;
+  }
+
+export type PrescriptionList = Array<Partial<Prescription>>;
+export type PrescriptionFilter = Partial<Prescription>;
